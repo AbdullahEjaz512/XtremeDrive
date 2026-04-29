@@ -6,6 +6,8 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null); // 'used', 'new', 'bikes', 'parts'
   const navigate = useNavigate();
+  const [navSearch, setNavSearch] = useState('');
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const handleMenuHover = (menu) => {
     setActiveMenu(menu);
@@ -62,65 +64,107 @@ export default function Navbar() {
           <span>Xtreme<span style={{ color: 'var(--black)' }}>Drive</span></span>
         </Link>
 
-        {/* Desktop Links with Hover Mega Dropdown */}
-        <div style={{
-          display: 'none',
-          gap: '16px',
-          alignItems: 'center',
-          height: '100%',
-        }} className="desktop-nav">
-          
-          <div
-            style={activeMenu === 'used' ? activeNavItemStyle : navItemStyle}
-            onMouseEnter={() => handleMenuHover('used')}
-            onClick={() => { handleMenuLeave(); navigate('/ads?category=CAR'); }}
-          >
-            Used Cars <ChevronDown size={14} />
+        {/* Desktop Wrapper for right alignment */}
+        <div className="desktop-nav" style={{ display: 'none', alignItems: 'center', height: '100%', gap: '20px' }}>
+          {/* Desktop Links with Hover Mega Dropdown */}
+          <div style={{
+            display: 'flex',
+            gap: '24px',
+            alignItems: 'center',
+            height: '100%',
+          }}>
+            
+            <div
+              style={activeMenu === 'used' ? activeNavItemStyle : navItemStyle}
+              onMouseEnter={() => handleMenuHover('used')}
+              onClick={() => { handleMenuLeave(); navigate('/ads?category=CAR'); }}
+            >
+              Used Cars <ChevronDown size={14} />
+            </div>
+
+            <div
+              style={activeMenu === 'new' ? activeNavItemStyle : navItemStyle}
+              onMouseEnter={() => handleMenuHover('new')}
+              onClick={() => { handleMenuLeave(); navigate('/new-cars'); }}
+            >
+              New Cars <ChevronDown size={14} />
+            </div>
+
+            <div
+              style={activeMenu === 'bikes' ? activeNavItemStyle : navItemStyle}
+              onMouseEnter={() => handleMenuHover('bikes')}
+              onClick={() => { handleMenuLeave(); navigate('/bikes'); }}
+            >
+              Bikes <ChevronDown size={14} />
+            </div>
+
+            <div
+              style={activeMenu === 'parts' ? activeNavItemStyle : navItemStyle}
+              onMouseEnter={() => handleMenuHover('parts')}
+              onClick={() => { handleMenuLeave(); navigate('/ads?category=AUTOPART'); }}
+            >
+              Auto Parts <ChevronDown size={14} />
+            </div>
+
           </div>
 
-          <div
-            style={activeMenu === 'new' ? activeNavItemStyle : navItemStyle}
-            onMouseEnter={() => handleMenuHover('new')}
-            onClick={() => { handleMenuLeave(); navigate('/new-cars'); }}
-          >
-            New Cars <ChevronDown size={14} />
-          </div>
-
-          <div
-            style={activeMenu === 'bikes' ? activeNavItemStyle : navItemStyle}
-            onMouseEnter={() => handleMenuHover('bikes')}
-            onClick={() => { handleMenuLeave(); navigate('/bikes'); }}
-          >
-            Bikes <ChevronDown size={14} />
-          </div>
-
-          <div
-            style={activeMenu === 'parts' ? activeNavItemStyle : navItemStyle}
-            onMouseEnter={() => handleMenuHover('parts')}
-            onClick={() => { handleMenuLeave(); navigate('/ads?category=AUTOPART'); }}
-          >
-            Auto Parts <ChevronDown size={14} />
-          </div>
-
-        </div>
-
-        {/* Action Buttons */}
-        <div style={{
-          display: 'none',
-          gap: '16px',
-          alignItems: 'center',
-        }} className="desktop-nav">
-          <button onClick={() => { handleMenuLeave(); navigate('/ads'); }} style={{
+          {/* Global Search Bar inserted here */}
+          <div style={{
             display: 'flex',
             alignItems: 'center',
-            color: 'var(--gray-700)',
-            gap: '6px',
+            backgroundColor: 'var(--gray-100)',
+            borderRadius: 'var(--border-radius-full)',
+            padding: '6px 16px',
+            width: isSearchFocused ? '260px' : '200px',
+            border: isSearchFocused ? '1px solid var(--primary)' : '1px solid var(--gray-200)',
+            transition: 'all 0.3s ease',
+            boxShadow: isSearchFocused ? '0 0 0 3px rgba(6, 150, 148, 0.15)' : 'none'
           }}>
-            <Search size={20} />
-          </button>
-          <Link to="/post-ad" className="btn btn-primary" style={{ padding: '10px 20px', fontSize: '15px' }} onClick={handleMenuLeave}>
-            <PlusCircle size={18} /> Post an Ad
-          </Link>
+            <input
+              type="text"
+              placeholder="Search across store..."
+              value={navSearch}
+              onChange={(e) => setNavSearch(e.target.value)}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setIsSearchFocused(false)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && navSearch.trim()) {
+                  navigate(`/ads?search=${encodeURIComponent(navSearch.trim())}`);
+                  handleMenuLeave();
+                }
+              }}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                width: '100%',
+                outline: 'none',
+                fontSize: '13.5px',
+                color: 'var(--gray-800)'
+              }}
+            />
+            <Search
+              size={18}
+              style={{ color: 'var(--gray-400)', cursor: 'pointer' }}
+              onClick={() => {
+                if (navSearch.trim()) {
+                  navigate(`/ads?search=${encodeURIComponent(navSearch.trim())}`);
+                  handleMenuLeave();
+                }
+              }}
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <div style={{
+            display: 'flex',
+            gap: '16px',
+            alignItems: 'center',
+          }}>
+
+            <Link to="/post-ad" className="btn btn-primary" style={{ padding: '10px 20px', fontSize: '15px' }} onClick={handleMenuLeave}>
+              <PlusCircle size={18} /> Post an Ad
+            </Link>
+          </div>
         </div>
 
         {/* Mobile Toggle */}
