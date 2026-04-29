@@ -1,0 +1,29 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import Home from './pages/Home';
+import AdsPage from './pages/AdsPage';
+import AdDetailPage from './pages/AdDetailPage';
+import PostAdPage from './pages/PostAdPage';
+import NewCarsPage from './pages/NewCarsPage';
+
+function App() {
+  return (
+    <Router>
+      <Navbar />
+      <main style={{ flex: 1 }}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/ads" element={<AdsPage />} />
+          <Route path="/ads/:id" element={<AdDetailPage />} />
+          <Route path="/post-ad" element={<PostAdPage />} />
+          <Route path="/new-cars" element={<NewCarsPage />} />
+        </Routes>
+      </main>
+      <Footer />
+    </Router>
+  );
+}
+
+export default App;

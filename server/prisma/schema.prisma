@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Ad {
+  id              String   @id @default(uuid())
+  category        String   // CAR, BIKE, AUTO_PART
+  title           String
+  make            String
+  model           String
+  year            Int?
+  city            String
+  price           Float
+  mileage         Int?
+  fuelType        String?  // Petrol, Diesel, Hybrid, Electric
+  transmission    String?  // Manual, Automatic
+  engineCapacity  Int?     // in cc
+  condition       String   // New, Used
+  description     String
+  images          String   // Comma-separated URLs
+  features        String?  // Comma-separated
+  sellerName      String
+  sellerPhone     String
+  sellerEmail     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
