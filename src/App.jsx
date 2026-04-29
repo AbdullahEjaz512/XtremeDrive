@@ -7,6 +7,7 @@ import AdsPage from './pages/AdsPage';
 import AdDetailPage from './pages/AdDetailPage';
 import PostAdPage from './pages/PostAdPage';
 import NewCarsPage from './pages/NewCarsPage';
+import BikesPage from './pages/BikesPage';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/ads/:id" element={<AdDetailPage />} />
           <Route path="/post-ad" element={<PostAdPage />} />
           <Route path="/new-cars" element={<NewCarsPage />} />
+          <Route path="/bikes" element={<BikesPage />} />
         </Routes>
       </main>
       <Footer />
