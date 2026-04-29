@@ -127,35 +127,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Value Added Services: Car Inspection */}
-      <section className="section-padding" style={{ backgroundColor: 'var(--gray-100)' }}>
-        <div className="container" style={{
-          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '30px', alignItems: 'center'
-        }}>
-          <div style={{ position: 'relative' }}>
-            <img
-              src="https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=800&auto=format&fit=crop"
-              alt="Car Inspection"
-              style={{ width: '100%', borderRadius: 'var(--border-radius-lg)', boxShadow: 'var(--shadow-xl)' }}
-            />
-          </div>
-          <div>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 700, marginBottom: '12px', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-              <BadgeCheck size={20} /> XtremeDrive Certifications
-            </div>
-            <h2 style={{ fontSize: '32px', fontWeight: 700, marginBottom: '16px' }}>
-              XtremeDrive Car Inspection
-            </h2>
-            <p style={{ color: 'var(--gray-600)', marginBottom: '24px', fontSize: '16px', lineHeight: '1.7' }}>
-              Don't buy a accidental car. Get a 200+ point comprehensive inspection report from our certified experts at your doorstep.
-            </p>
-            <button onClick={() => alert('Inspection Service Booking coming soon!')} className="btn btn-primary hover-lift" style={{ padding: '14px 32px', fontSize: '16px' }}>
-              Book Inspection Now
-            </button>
-          </div>
-        </div>
-      </section>
+
 
       {/* New Cars by Make Section */}
       <section className="section-padding" style={{ backgroundColor: 'var(--white)' }}>

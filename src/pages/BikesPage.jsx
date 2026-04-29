@@ -78,7 +78,7 @@ export default function BikesPage() {
 
   const bikeAccessories = [
     { name: 'Bike Parts', search: 'Parts', icon: '🔧' },
-    { name: 'Bike Accessories', search: 'Accessories', icon: '🎒' },
+    { name: 'Bike Accessories', search: 'Accessories', icon: '⚙️' },
     { name: 'Bike Exhaust', search: 'Exhaust', icon: '💨' },
     { name: 'Bike Helmet', search: 'Helmet', icon: '🪖' },
     { name: 'Bike Air Filter', search: 'Filter', icon: '🌪️' },
@@ -86,7 +86,7 @@ export default function BikesPage() {
     { name: 'Bike Gloves', search: 'Gloves', icon: '🧤' },
     { name: 'Bike Headlights', search: 'Headlight', icon: '💡' },
     { name: 'All Purpose Cleaner', search: 'Cleaner', icon: '🧴' },
-    { name: 'Microfiber Cloth', search: 'Cloth', icon: '🧹' },
+    { name: 'Microfiber Cloth', search: 'Cloth', icon: '🧽' },
     { name: 'Engine Oil', search: 'Oil', icon: '🛢️' },
     { name: 'GPS Tracker', search: 'Tracker', icon: '📍' }
   ];

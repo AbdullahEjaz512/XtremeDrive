@@ -160,15 +160,7 @@ export default function Navbar() {
                 <div>
                   <h4 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--black)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Our Services</h4>
                   <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <li>
-                      <Link to="/" onClick={handleMenuLeave} style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--gray-700)' }}>
-                        <Shield size={16} style={{ color: 'var(--primary)' }} />
-                        <div>
-                          <span style={{ fontWeight: 600, display: 'block', fontSize: '14px' }}>Car Inspection</span>
-                          <span style={{ fontSize: '12px', color: 'var(--gray-400)' }}>200+ point inspection check</span>
-                        </div>
-                      </Link>
-                    </li>
+
                     <li>
                       <Link to="/post-ad" onClick={handleMenuLeave} style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--gray-700)' }}>
                         <DollarSign size={16} style={{ color: 'var(--primary)' }} />
