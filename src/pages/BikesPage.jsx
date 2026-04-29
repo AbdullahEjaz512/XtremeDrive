@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Bike, MapPin, CheckCircle } from 'lucide-react';
+import { Search, MapPin, X, ChevronRight, Settings } from 'lucide-react';
 
 export default function BikesPage() {
   const navigate = useNavigate();
@@ -9,8 +9,11 @@ export default function BikesPage() {
   const [selectedCity, setSelectedCity] = useState('');
   const [listings, setListings] = useState([]);
 
+  // Brand expansion state
+  const [expandedBrand, setExpandedBrand] = useState(null);
+  const [expandedCondition, setExpandedCondition] = useState('New');
+
   useEffect(() => {
-    // Fetch all ads and filter for BIKE
     fetch('http://localhost:5000/api/ads?category=BIKE')
       .then(res => res.json())
       .then(data => setListings(data))
@@ -26,6 +29,46 @@ export default function BikesPage() {
   };
 
   const makes = ['Honda', 'Yamaha', 'Suzuki', 'United', 'Road Prince'];
+  
+  const bikeModels = {
+    Honda: ['CD 70', 'CG 125', 'Pridor', 'CB 125F', 'CB 150F'],
+    Yamaha: ['YBR 125', 'YBR 125G', 'YB 125Z'],
+    Suzuki: ['GS 150', 'GR 150', 'GSX 125', 'GD 110S'],
+    United: ['US 70', 'US 100', 'US 125'],
+    'Road Prince': ['RP 70', 'RP 110', 'RP 125']
+  };
+
+  const newBikeCatalog = {
+    Honda: [
+      { name: 'Honda CD 70', price: '157,900', engine: '70cc', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400' },
+      { name: 'Honda CG 125', price: '234,900', engine: '125cc', img: 'https://images.unsplash.com/photo-1558981457-4b0598a39f99?w=400' },
+      { name: 'Honda Pridor', price: '208,900', engine: '100cc', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400' },
+      { name: 'Honda CB 125F', price: '390,900', engine: '125cc', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400' },
+      { name: 'Honda CB 150F', price: '493,900', engine: '150cc', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400' }
+    ],
+    Yamaha: [
+      { name: 'Yamaha YBR 125', price: '466,000', engine: '125cc', img: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=400' },
+      { name: 'Yamaha YBR 125G', price: '485,000', engine: '125cc', img: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=400' },
+      { name: 'Yamaha YB 125Z', price: '424,000', engine: '125cc', img: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=400' }
+    ],
+    Suzuki: [
+      { name: 'Suzuki GD 110S', price: '352,000', engine: '110cc', img: 'https://images.unsplash.com/photo-1471450411576-17c058114bfc?w=400' },
+      { name: 'Suzuki GS 150', price: '382,000', engine: '150cc', img: 'https://images.unsplash.com/photo-1471450411576-17c058114bfc?w=400' },
+      { name: 'Suzuki GR 150', price: '547,000', engine: '150cc', img: 'https://images.unsplash.com/photo-1471450411576-17c058114bfc?w=400' },
+      { name: 'Suzuki GSX 125', price: '499,000', engine: '125cc', img: 'https://images.unsplash.com/photo-1471450411576-17c058114bfc?w=400' }
+    ],
+    United: [
+      { name: 'United US 70', price: '109,500', engine: '70cc', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400' },
+      { name: 'United US 100', price: '117,000', engine: '100cc', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400' },
+      { name: 'United US 125', price: '165,000', engine: '125cc', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400' }
+    ],
+    'Road Prince': [
+      { name: 'Road Prince RP 70', price: '109,500', engine: '70cc', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400' },
+      { name: 'Road Prince RP 110', price: '119,500', engine: '110cc', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400' },
+      { name: 'Road Prince RP 125', price: '165,000', engine: '125cc', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400' }
+    ]
+  };
+
   const popularBikes = [
     { name: 'Honda CG 125', price: '234,900', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400&auto=format&fit=crop' },
     { name: 'Yamaha YBR 125', price: '466,000', img: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=400&auto=format&fit=crop' },
@@ -33,7 +76,33 @@ export default function BikesPage() {
     { name: 'Suzuki GS 150', price: '382,000', img: 'https://images.unsplash.com/photo-1471450411576-17c058114bfc?w=400&auto=format&fit=crop' }
   ];
 
+  const bikeAccessories = [
+    { name: 'Bike Parts', search: 'Parts', icon: '🔧' },
+    { name: 'Bike Accessories', search: 'Accessories', icon: '🎒' },
+    { name: 'Bike Exhaust', search: 'Exhaust', icon: '💨' },
+    { name: 'Bike Helmet', search: 'Helmet', icon: '🪖' },
+    { name: 'Bike Air Filter', search: 'Filter', icon: '🌪️' },
+    { name: 'Bike Brake Shoe', search: 'Brake', icon: '🛑' },
+    { name: 'Bike Gloves', search: 'Gloves', icon: '🧤' },
+    { name: 'Bike Headlights', search: 'Headlight', icon: '💡' },
+    { name: 'All Purpose Cleaner', search: 'Cleaner', icon: '🧴' },
+    { name: 'Microfiber Cloth', search: 'Cloth', icon: '🧹' },
+    { name: 'Engine Oil', search: 'Oil', icon: '🛢️' },
+    { name: 'GPS Tracker', search: 'Tracker', icon: '📍' }
+  ];
+
   const cities = ['Karachi', 'Lahore', 'Islamabad', 'Rawalpindi', 'Peshawar'];
+
+  const handleBrandClick = (brandName, type) => {
+    setExpandedBrand(brandName);
+    setExpandedCondition(type);
+  };
+
+  const handleModelSelect = (modelName) => {
+    // ONLY for used bikes, redirect to filtering ads
+    navigate(`/ads?category=BIKE&condition=Used&make=${expandedBrand}&search=${modelName}`);
+    setExpandedBrand(null);
+  };
 
   return (
     <div style={{ animation: 'fadeIn 0.5s ease', backgroundColor: 'var(--gray-50)', minHeight: '100vh', paddingBottom: '60px' }}>
@@ -116,6 +185,81 @@ export default function BikesPage() {
         </div>
       </section>
 
+      {/* Brand Overlay Selector */}
+      {expandedBrand && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+          backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 110, display: 'flex',
+          alignItems: 'center', justifyContent: 'center', animation: 'fadeIn 0.2s ease'
+        }}>
+          <div style={{
+            backgroundColor: 'var(--white)', padding: '30px', borderRadius: 'var(--border-radius-lg)',
+            maxWidth: '650px', width: '90%', maxHeight: '80vh', overflowY: 'auto',
+            boxShadow: 'var(--shadow-2xl)', position: 'relative'
+          }}>
+            <button onClick={() => setExpandedBrand(null)} style={{
+              position: 'absolute', top: '20px', right: '20px', color: 'var(--gray-500)',
+              background: 'none', border: 'none', cursor: 'pointer'
+            }}>
+              <X size={24} />
+            </button>
+            <h3 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '20px', color: 'var(--black)' }}>
+              {expandedBrand} - Available {expandedCondition} Bikes
+            </h3>
+
+            {expandedCondition === 'New' ? (
+              /* New Bike Catalog Showroom style */
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                {newBikeCatalog[expandedBrand]?.map(bike => (
+                  <div
+                    key={bike.name}
+                    style={{
+                      border: '1px solid var(--gray-200)',
+                      borderRadius: 'var(--border-radius-md)',
+                      overflow: 'hidden',
+                      backgroundColor: 'var(--gray-50)'
+                    }}
+                  >
+                    <div style={{ height: '140px', backgroundColor: 'var(--gray-200)' }}>
+                      <img src={bike.img} alt={bike.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                    <div style={{ padding: '16px' }}>
+                      <h4 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--black)' }}>{bike.name}</h4>
+                      <p style={{ fontSize: '13px', color: 'var(--gray-500)', margin: '4px 0' }}>Engine: {bike.engine}</p>
+                      <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--primary)', marginTop: '8px' }}>
+                        PKR {bike.price}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              /* Used Bike Models array style (links to search ads) */
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {bikeModels[expandedBrand]?.map(model => (
+                  <div
+                    key={model}
+                    onClick={() => handleModelSelect(model)}
+                    className="hover-lift"
+                    style={{
+                      padding: '16px 20px', backgroundColor: 'var(--gray-50)',
+                      borderRadius: 'var(--border-radius-md)', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      fontWeight: 600, border: '1px solid var(--gray-200)'
+                    }}
+                  >
+                    <span>{model}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: 'var(--primary)' }}>
+                      View Ads <ChevronRight size={18} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Popular New Bikes */}
       <section className="container" style={{ marginTop: '50px' }}>
         <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '24px', color: 'var(--black)' }}>Popular New Bikes</h2>
@@ -145,6 +289,41 @@ export default function BikesPage() {
         </div>
       </section>
 
+      {/* Bike Accessories Section */}
+      <section className="container" style={{ marginTop: '50px' }}>
+        <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '24px', color: 'var(--black)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Settings size={26} style={{ color: 'var(--primary)' }} />
+          Bike Accessories
+        </h2>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+          gap: '20px'
+        }}>
+          {bikeAccessories.map(acc => (
+            <div
+              key={acc.name}
+              onClick={() => navigate(`/ads?category=AUTOPART&search=${acc.search}`)}
+              className="hover-lift"
+              style={{
+                backgroundColor: 'var(--white)',
+                border: '1px solid var(--gray-200)',
+                borderRadius: 'var(--border-radius-md)',
+                padding: '24px 16px',
+                textAlign: 'center',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+              }}
+              onMouseOver={(e) => e.target.style.borderColor = 'var(--primary)'}
+              onMouseOut={(e) => e.target.style.borderColor = 'var(--gray-200)'}
+            >
+              <div style={{ fontSize: '32px', marginBottom: '12px' }}>{acc.icon}</div>
+              <h4 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--gray-800)' }}>{acc.name}</h4>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* New Bikes by Make */}
       <section className="container" style={{ marginTop: '50px' }}>
         <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '24px', color: 'var(--black)' }}>New Bikes by Make</h2>
@@ -152,18 +331,50 @@ export default function BikesPage() {
           {makes.map(make => (
             <div
               key={make}
-              onClick={() => navigate(`/ads?category=BIKE&make=${make}`)}
+              onClick={() => handleBrandClick(make, 'New')}
               className="hover-lift"
               style={{
-                padding: '20px',
+                padding: '24px 20px',
                 backgroundColor: 'var(--white)',
                 border: '1px solid var(--gray-200)',
                 borderRadius: 'var(--border-radius-md)',
                 textAlign: 'center',
                 cursor: 'pointer',
                 fontWeight: 600,
-                fontSize: '18px'
+                fontSize: '18px',
+                transition: 'all 0.2s'
               }}
+              onMouseOver={(e) => e.target.style.borderColor = 'var(--primary)'}
+              onMouseOut={(e) => e.target.style.borderColor = 'var(--gray-200)'}
+            >
+              {make}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Used Bikes by Make */}
+      <section className="container" style={{ marginTop: '50px' }}>
+        <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '24px', color: 'var(--black)' }}>Used Bikes by Make</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '20px' }}>
+          {makes.map(make => (
+            <div
+              key={make}
+              onClick={() => handleBrandClick(make, 'Used')}
+              className="hover-lift"
+              style={{
+                padding: '24px 20px',
+                backgroundColor: 'var(--white)',
+                border: '1px solid var(--gray-200)',
+                borderRadius: 'var(--border-radius-md)',
+                textAlign: 'center',
+                cursor: 'pointer',
+                fontWeight: 600,
+                fontSize: '18px',
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => e.target.style.borderColor = 'var(--primary)'}
+              onMouseOut={(e) => e.target.style.borderColor = 'var(--gray-200)'}
             >
               {make}
             </div>

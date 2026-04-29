@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Check, AlertCircle } from 'lucide-react';
+import { Check, AlertCircle, Upload, Trash2, Link } from 'lucide-react';
 
 export default function PostAdPage() {
   const navigate = useNavigate();
@@ -29,9 +29,72 @@ export default function PostAdPage() {
     sellerEmail: ''
   });
 
+  const [isDragging, setIsDragging] = useState(false);
+  const [uploadedPreviews, setUploadedPreviews] = useState([]);
+  const [pastedUrl, setPastedUrl] = useState('');
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Convert uploaded files to Base64
+  const handleFiles = (files) => {
+    const fileArray = Array.from(files);
+    fileArray.forEach(file => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setUploadedPreviews(prev => {
+          const updated = [...prev, reader.result];
+          // Sync with form.images (comma-separated base64)
+          setForm(f => ({ ...f, images: updated.join(',') }));
+          return updated;
+        });
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const onDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const onDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const onDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files) {
+      handleFiles(e.dataTransfer.files);
+    }
+  };
+
+  const handleBrowse = (e) => {
+    if (e.target.files) {
+      handleFiles(e.target.files);
+    }
+  };
+
+  const addUrlImage = () => {
+    if (pastedUrl.trim()) {
+      setUploadedPreviews(prev => {
+        const updated = [...prev, pastedUrl.trim()];
+        setForm(f => ({ ...f, images: updated.join(',') }));
+        return updated;
+      });
+      setPastedUrl('');
+    }
+  };
+
+  const removeImage = (index) => {
+    setUploadedPreviews(prev => {
+      const updated = prev.filter((_, i) => i !== index);
+      setForm(f => ({ ...f, images: updated.join(',') }));
+      return updated;
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -39,7 +102,6 @@ export default function PostAdPage() {
     setLoading(true);
     setError('');
 
-    // Quick validations
     if (!form.title || !form.make || !form.model || !form.city || !form.price || !form.sellerName || !form.sellerPhone) {
       setError('Please fill in all the required fields (*)');
       setLoading(false);
@@ -168,7 +230,7 @@ export default function PostAdPage() {
             </div>
           </div>
 
-          {/* Section 2: Technical Specifications (Conditional) */}
+          {/* Section 2: Specs */}
           {form.category !== 'AUTOPART' && (
             <>
               <h3 style={{ fontSize: '18px', fontWeight: 700, borderBottom: '1px solid var(--gray-100)', paddingBottom: '8px', marginBottom: '20px', marginTop: '40px' }}>
@@ -222,9 +284,104 @@ export default function PostAdPage() {
             <input type="text" name="features" value={form.features} onChange={handleChange} placeholder="e.g. ABS, Alloy Rims, Sunroof" />
           </div>
 
+          {/* Image Upload Area */}
           <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--gray-700)', marginBottom: '6px' }}>Images (Comma-separated URLs)</label>
-            <input type="text" name="images" value={form.images} onChange={handleChange} placeholder="Enter online image URLs separated by commas" />
+            <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--gray-700)', marginBottom: '12px' }}>Upload Images *</label>
+            
+            <div
+              onDragOver={onDragOver}
+              onDragLeave={onDragLeave}
+              onDrop={onDrop}
+              style={{
+                border: `2px dashed ${isDragging ? 'var(--primary)' : 'var(--gray-300)'}`,
+                backgroundColor: isDragging ? 'var(--primary-light)' : 'var(--gray-50)',
+                padding: '40px 20px',
+                borderRadius: 'var(--border-radius-md)',
+                textAlign: 'center',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '12px'
+              }}
+            >
+              <Upload size={32} style={{ color: 'var(--gray-400)' }} />
+              <div>
+                <p style={{ fontSize: '15px', fontWeight: 600, color: 'var(--gray-700)' }}>
+                  Drag and drop your files here, or <span style={{ color: 'var(--primary)' }}>browse</span>
+                </p>
+                <p style={{ fontSize: '12px', color: 'var(--gray-400)', marginTop: '4px' }}>Supports JPG, JPEG, PNG</p>
+              </div>
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleBrowse}
+                style={{
+                  position: 'absolute', opacity: 0, width: '100%', height: '100%',
+                  top: 0, left: 0, cursor: 'pointer', pointerEvents: 'none'
+                }}
+              />
+              <button
+                type="button"
+                className="btn"
+                onClick={() => document.getElementById('file-input-id').click()}
+                style={{ backgroundColor: 'var(--gray-200)', color: 'var(--gray-700)' }}
+              >
+                Choose Files
+              </button>
+              <input id="file-input-id" type="file" multiple accept="image/*" onChange={handleBrowse} style={{ display: 'none' }} />
+            </div>
+
+            {/* URL Fallback */}
+            <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
+              <input
+                type="text"
+                placeholder="Or paste an image URL..."
+                value={pastedUrl}
+                onChange={(e) => setPastedUrl(e.target.value)}
+                style={{ flex: 1 }}
+              />
+              <button
+                type="button"
+                onClick={addUrlImage}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  backgroundColor: 'var(--black)', color: 'var(--white)',
+                  borderRadius: 'var(--border-radius-md)', padding: '0 16px'
+                }}
+              >
+                <Link size={16} /> Add URL
+              </button>
+            </div>
+
+            {/* Previews */}
+            {uploadedPreviews.length > 0 && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '20px' }}>
+                {uploadedPreviews.map((src, index) => (
+                  <div key={index} style={{
+                    width: '100px', height: '100px', position: 'relative',
+                    borderRadius: 'var(--border-radius-sm)', overflow: 'hidden',
+                    border: '1px solid var(--gray-200)'
+                  }}>
+                    <img src={src} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      style={{
+                        position: 'absolute', top: '4px', right: '4px',
+                        backgroundColor: 'rgba(239, 68, 68, 0.8)', color: 'var(--white)',
+                        border: 'none', borderRadius: '50%', width: '22px', height: '22px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
+                      }}
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Section 4: Seller Info */}

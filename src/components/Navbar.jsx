@@ -70,19 +70,35 @@ export default function Navbar() {
           height: '100%',
         }} className="desktop-nav">
           
-          <div style={activeMenu === 'used' ? activeNavItemStyle : navItemStyle} onMouseEnter={() => handleMenuHover('used')}>
+          <div
+            style={activeMenu === 'used' ? activeNavItemStyle : navItemStyle}
+            onMouseEnter={() => handleMenuHover('used')}
+            onClick={() => { handleMenuLeave(); navigate('/ads?category=CAR'); }}
+          >
             Used Cars <ChevronDown size={14} />
           </div>
 
-          <div style={activeMenu === 'new' ? activeNavItemStyle : navItemStyle} onMouseEnter={() => handleMenuHover('new')}>
+          <div
+            style={activeMenu === 'new' ? activeNavItemStyle : navItemStyle}
+            onMouseEnter={() => handleMenuHover('new')}
+            onClick={() => { handleMenuLeave(); navigate('/new-cars'); }}
+          >
             New Cars <ChevronDown size={14} />
           </div>
 
-          <div style={activeMenu === 'bikes' ? activeNavItemStyle : navItemStyle} onMouseEnter={() => handleMenuHover('bikes')}>
+          <div
+            style={activeMenu === 'bikes' ? activeNavItemStyle : navItemStyle}
+            onMouseEnter={() => handleMenuHover('bikes')}
+            onClick={() => { handleMenuLeave(); navigate('/bikes'); }}
+          >
             Bikes <ChevronDown size={14} />
           </div>
 
-          <div style={activeMenu === 'parts' ? activeNavItemStyle : navItemStyle} onMouseEnter={() => handleMenuHover('parts')}>
+          <div
+            style={activeMenu === 'parts' ? activeNavItemStyle : navItemStyle}
+            onMouseEnter={() => handleMenuHover('parts')}
+            onClick={() => { handleMenuLeave(); navigate('/ads?category=AUTOPART'); }}
+          >
             Auto Parts <ChevronDown size={14} />
           </div>
 
