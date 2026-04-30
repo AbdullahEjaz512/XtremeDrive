@@ -4,16 +4,16 @@ import { Search, Globe, Users, Star, Layout, Clock, ChevronRight, MessageSquare 
 
 export default function BlogPage() {
   const featuredNews = [
-    { id: 1, title: 'Deepal S07 and L07 Prices in Pakistan Revealed!', category: 'PRICES', date: 'May 16, 2024', img: 'https://cache1.pakwheels.com/system/blog_articles/images/000/006/845/medium/Deepal_L07_and_S07.jpg?1715848542' },
-    { id: 2, title: 'Hyundai Santa Fe Hybrid Price Decreased', category: 'NEWS', date: 'May 15, 2024', img: 'https://cache4.pakwheels.com/system/blog_articles/images/000/006/842/medium/Santa_Fe.jpg?1715764842' },
-    { id: 3, title: 'Kia Lucky Motors Announces Big Price Cut', category: 'PRICES', date: 'May 14, 2024', img: 'https://cache2.pakwheels.com/system/blog_articles/images/000/006/840/medium/Kia_Sportage.jpg?1715678442' }
+    { id: 1, title: 'Deepal S07 and L07 Prices in Pakistan Revealed!', category: 'PRICES', date: 'May 16, 2024', img: '/oshan_x7_suv_1777553388111.png' }, // Using a high-quality SUV image
+    { id: 2, title: 'Hyundai Santa Fe Hybrid Price Decreased', category: 'NEWS', date: 'May 15, 2024', img: '/deepal_s07_electric_1777553454321.png' },
+    { id: 3, title: 'Kia Lucky Motors Announces Big Price Cut', category: 'PRICES', date: 'May 14, 2024', img: '/honda_civic_white_1777553410229.png' }
   ];
 
   const mainNewsList = [
-    { id: 4, title: 'Oshan X7 Price Slashed by Up to Rs. 400,000', excerpt: 'Changan Pakistan has announced a significant price reduction for its popular SUV...', date: '1 day ago', category: 'PRICES' },
-    { id: 5, title: 'Honda City & Civic Prices Also Going Down?', excerpt: 'Speculations are high as competitors reduce prices. Here is what we know...', date: '2 days ago', category: 'NEWS' },
-    { id: 6, title: '5 Best Fuel Efficient Cars in Pakistan 2024', excerpt: 'With rising petrol prices, these cars will save your wallet. Check our top picks...', date: '3 days ago', category: 'TIPS' },
-    { id: 7, title: 'Deepal S07 SUV - First Look & Review', excerpt: 'Master Changan is bringing pure electric SUVs to Pakistan. Is it worth it?', date: '4 days ago', category: 'REVIEWS' }
+    { id: 4, title: 'Oshan X7 Price Slashed by Up to Rs. 400,000', excerpt: 'Changan Pakistan has announced a significant price reduction for its popular SUV...', date: '1 day ago', category: 'PRICES', img: '/oshan_x7_suv_1777553388111.png' },
+    { id: 5, title: 'Honda City & Civic Prices Also Going Down?', excerpt: 'Speculations are high as competitors reduce prices. Here is what we know...', date: '2 days ago', category: 'NEWS', img: '/honda_civic_white_1777553410229.png' },
+    { id: 6, title: '5 Best Fuel Efficient Cars in Pakistan 2024', excerpt: 'With rising petrol prices, these cars will save your wallet. Check our top picks...', date: '3 days ago', category: 'TIPS', img: '/suzuki_alto_eco_1777553431477.png' },
+    { id: 7, title: 'Deepal S07 SUV - First Look & Review', excerpt: 'Master Changan is bringing pure electric SUVs to Pakistan. Is it worth it?', date: '4 days ago', category: 'REVIEWS', img: '/deepal_s07_electric_1777553454321.png' }
   ];
 
   const popularTags = ['Price', 'Suzuki', 'Toyota', 'Honda', 'Review', 'Used Car', 'Electric', 'Hybrid', 'Tips'];
@@ -78,7 +78,9 @@ export default function BlogPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
               {mainNewsList.map(news => (
                 <div key={news.id} style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: '25px' }}>
-                  <div style={{ backgroundColor: '#eee', aspectRatio: '16/10', borderRadius: '4px' }}></div>
+                  <div style={{ backgroundColor: '#eee', aspectRatio: '16/10', borderRadius: '4px', overflow: 'hidden' }}>
+                    <img src={news.img} alt={news.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
                   <div>
                     <span style={{ color: '#b73439', fontSize: '11px', fontWeight: 800 }}>{news.category}</span>
                     <h3 style={{ fontSize: '18px', fontWeight: 800, margin: '8px 0', color: '#1a3b5d', cursor: 'pointer' }}>{news.title}</h3>
@@ -133,10 +135,16 @@ export default function BlogPage() {
             <div>
               <h4 style={{ fontWeight: 800, marginBottom: '20px', fontSize: '16px', borderBottom: '2px solid #ddd', paddingBottom: '10px' }}>Featured Blogs</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                {[1, 2, 3].map(i => (
+                {[
+                  { title: 'How to protect your car paint in Summer heat?', img: '/car_maintenance_tips_1777553474865.png' },
+                  { title: 'Top 10 Car Accessories for 2024', img: '/honda_civic_white_1777553410229.png' },
+                  { title: 'Best Electric Cars in Pakistan', img: '/deepal_s07_electric_1777553454321.png' }
+                ].map((blog, i) => (
                   <div key={i} style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                    <div style={{ width: '80px', height: '60px', backgroundColor: '#eee', borderRadius: '4px' }}></div>
-                    <div style={{ fontSize: '13px', fontWeight: 700, lineHeight: '1.3' }}>How to protect your car paint in Summer heat?</div>
+                    <div style={{ width: '80px', height: '60px', backgroundColor: '#eee', borderRadius: '4px', overflow: 'hidden' }}>
+                      <img src={blog.img} alt="blog" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                    <div style={{ fontSize: '13px', fontWeight: 700, lineHeight: '1.3', cursor: 'pointer' }}>{blog.title}</div>
                   </div>
                 ))}
               </div>
@@ -152,11 +160,18 @@ export default function BlogPage() {
             <Link to="#" style={{ color: '#b73439', fontSize: '14px', fontWeight: 700, display: 'flex', alignItems: 'center' }}>View All <ChevronRight size={16} /></Link>
           </div>
           <div className="grid grid-4" style={{ gap: '20px' }}>
-            {[1, 2, 3, 4].map(i => (
+            {[
+              { title: 'Essential Car Maintenance Tips for Beginners', img: '/car_maintenance_tips_1777553474865.png' },
+              { title: 'How to improve your car fuel average?', img: '/suzuki_alto_eco_1777553431477.png' },
+              { title: 'Signs your car battery needs replacement', img: '/honda_civic_white_1777553410229.png' },
+              { title: 'Top safest cars available in Pakistan', img: '/oshan_x7_suv_1777553388111.png' }
+            ].map((tip, i) => (
               <div key={i} className="card-pakwheels hover-lift" style={{ cursor: 'pointer' }}>
-                <div style={{ height: '160px', backgroundColor: '#ddd' }}></div>
+                <div style={{ height: '160px', backgroundColor: '#ddd', overflow: 'hidden' }}>
+                  <img src={tip.img} alt="tip" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
                 <div style={{ padding: '15px' }}>
-                  <h4 style={{ fontSize: '14px', fontWeight: 800, lineHeight: '1.4' }}>Essential Car Maintenance Tips for Beginners</h4>
+                  <h4 style={{ fontSize: '14px', fontWeight: 800, lineHeight: '1.4' }}>{tip.title}</h4>
                   <div style={{ marginTop: '10px', fontSize: '12px', color: '#999' }}>May 10, 2024</div>
                 </div>
               </div>
