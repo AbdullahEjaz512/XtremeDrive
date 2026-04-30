@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { 
   Search, MapPin, X, ChevronRight, Settings, 
-  Bike, Shield, Zap, Tool, Award, Star
+  Bike, Shield, Zap, Wrench, Award, Star
 } from 'lucide-react';
 
 export default function BikesPage() {

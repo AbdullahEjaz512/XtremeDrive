@@ -9,6 +9,9 @@ import {
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null); 
+  const [isUrdu, setIsUrdu] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
 
   const handleMenuHover = (menu) => {
@@ -40,7 +43,7 @@ export default function Navbar() {
   return (
     <>
       {/* Top Bar */}
-      <div className="top-bar" style={{ display: window.innerWidth < 768 ? 'none' : 'block' }}>
+      <div className="top-bar desktop-only" style={{ background: '#23292f' }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
             <Link to="#" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -48,11 +51,39 @@ export default function Navbar() {
             </Link>
           </div>
           <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-            <Link to="#" style={{ color: 'var(--primary)', fontWeight: 700 }}>اردو</Link>
+            <button 
+              onClick={() => setIsUrdu(!isUrdu)} 
+              style={{ color: 'var(--primary)', fontWeight: 700, cursor: 'pointer', background: 'none', border: 'none' }}
+            >
+              {isUrdu ? 'English' : 'اردو'}
+            </button>
             <span style={{ color: 'var(--gray-600)' }}>|</span>
-            <Link to="#" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>Sign Up</Link>
-            <span style={{ color: 'var(--gray-600)' }}>|</span>
-            <Link to="#" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>Sign In</Link>
+            <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+              <Link to="#" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <MessageSquare size={16} /> <span>{isUrdu ? 'ان باکس' : 'Inbox'}</span>
+              </Link>
+              <Link to="#" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ position: 'relative' }}>
+                  <Heart size={16} />
+                  <span style={{ position: 'absolute', top: '-8px', right: '-8px', background: 'var(--primary)', color: 'white', fontSize: '10px', padding: '0 4px', borderRadius: '10px' }}>0</span>
+                </div>
+                <span>{isUrdu ? 'محفوظ کردہ' : 'Saved'}</span>
+              </Link>
+              <Link to="#" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ position: 'relative' }}>
+                  <ShoppingCart size={16} />
+                  <span style={{ position: 'absolute', top: '-8px', right: '-8px', background: 'var(--primary)', color: 'white', fontSize: '10px', padding: '0 4px', borderRadius: '10px' }}>{cartCount}</span>
+                </div>
+                <span>{isUrdu ? 'کارٹ' : 'Cart'}</span>
+              </Link>
+              <button onClick={() => setShowAuthModal(true)} style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 600 }}>
+                {isUrdu ? 'سائن اپ' : 'Sign Up'}
+              </button>
+              <span style={{ color: 'var(--gray-600)' }}>|</span>
+              <button onClick={() => setShowAuthModal(true)} style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 600 }}>
+                {isUrdu ? 'سائن ان' : 'Sign In'}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -107,25 +138,29 @@ export default function Navbar() {
 
           {/* Actions */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-            <button className="desktop-only" style={{ color: 'var(--white)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Heart size={20} />
-            </button>
-            <button className="desktop-only" style={{ color: 'var(--white)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Bell size={20} />
-            </button>
             <button 
               onClick={() => { setIsOpen(false); navigate('/post-ad'); }}
-              className="btn btn-primary" 
-              style={{ padding: '8px 20px', borderRadius: '4px', fontSize: '14px', fontWeight: 700 }}
+              className="btn" 
+              style={{ 
+                padding: '10px 24px', 
+                borderRadius: '4px', 
+                fontSize: '14px', 
+                fontWeight: 700,
+                backgroundColor: '#b73439', // Dark red for Post an Ad
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
             >
-              Post an Ad
+              Post an Ad <ChevronDown size={14} />
             </button>
             
             {/* Mobile Menu Toggle */}
             <button 
               className="mobile-only" 
               onClick={() => setIsOpen(!isOpen)}
-              style={{ color: 'var(--white)', display: 'none' }}
+              style={{ color: 'var(--white)' }}
             >
               {isOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
@@ -211,19 +246,33 @@ export default function Navbar() {
             </ul>
           </div>
         )}
+        {/* Auth Modal */}
+        {showAuthModal && (
+          <div style={{
+            position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+            background: 'rgba(0,0,0,0.7)', zIndex: 1000,
+            display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }} onClick={() => setShowAuthModal(false)}>
+            <div className="card-pakwheels animate-fade" style={{
+              width: '400px', padding: '40px', background: 'white',
+              position: 'relative', cursor: 'default'
+            }} onClick={e => e.stopPropagation()}>
+              <button style={{ position: 'absolute', top: '15px', right: '15px', color: '#999' }} onClick={() => setShowAuthModal(false)}>
+                <X size={24} />
+              </button>
+              <h2 style={{ textAlign: 'center', color: '#1a3b5d', marginBottom: '30px' }}>Sign In</h2>
+              <form style={{ display: 'flex', flexDirection: 'column', gap: '20px' }} onSubmit={(e) => { e.preventDefault(); setShowAuthModal(false); }}>
+                <input type="email" placeholder="Email Address" required />
+                <input type="password" placeholder="Password" required />
+                <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>Continue</button>
+                <div style={{ textAlign: 'center', fontSize: '13px', color: '#666' }}>
+                  Don't have an account? <Link to="#" style={{ color: 'var(--primary)', fontWeight: 700 }}>Sign Up</Link>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </nav>
-
-      {/* Global CSS for Mobile Nav */}
-      <style>{`
-        @media (max-width: 768px) {
-          .desktop-only { display: none !important; }
-          .mobile-only { display: block !important; }
-        }
-        @media (min-width: 769px) {
-          .desktop-only { display: flex !important; }
-          .mobile-only { display: none !important; }
-        }
-      `}</style>
     </>
   );
 }

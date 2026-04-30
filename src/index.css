@@ -350,8 +350,25 @@ input:focus, select:focus, textarea:focus {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Responsive Images */
+/* Responsive Image Fix */
 img {
   max-width: 100%;
   height: auto;
+}
+
+.desktop-only {
+  display: flex !important;
+}
+
+.mobile-only {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+  .mobile-only {
+    display: block !important;
+  }
 }
