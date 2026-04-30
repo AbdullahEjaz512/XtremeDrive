@@ -9,6 +9,7 @@ import PostAdPage from './pages/PostAdPage';
 import NewCarsPage from './pages/NewCarsPage';
 import BikesPage from './pages/BikesPage';
 import AutoStorePage from './pages/AutoStorePage';
+import SellLandingPage from './pages/SellLandingPage';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/ads" element={<AdsPage />} />
           <Route path="/ads/:id" element={<AdDetailPage />} />
+          <Route path="/sell" element={<SellLandingPage />} />
           <Route path="/post-ad" element={<PostAdPage />} />
           <Route path="/new-cars" element={<NewCarsPage />} />
           <Route path="/bikes" element={<BikesPage />} />

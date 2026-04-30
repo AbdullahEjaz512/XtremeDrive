@@ -210,14 +210,14 @@ export default function Home() {
           <p style={{ color: '#666', marginBottom: '30px' }}>Cars inspected and managed by our experts for your peace of mind</p>
           <div className="horizontal-scroll">
             {ads.map(ad => (
-              <div key={ad.id} className="card-pakwheels hover-lift" style={{ minWidth: '260px' }}>
+              <Link to={`/ads/${ad.id}`} key={ad.id} className="card-pakwheels hover-lift" style={{ minWidth: '260px' }}>
                 <img src={ad.image} style={{ width: '100%', height: '150px', objectFit: 'cover' }} />
                 <div style={{ padding: '15px' }}>
                   <div className="managed-badge"><CheckCircle size={14} /> Xtreme Managed</div>
                   <h4 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--primary)' }}>{ad.title}</h4>
                   <div style={{ fontWeight: 800, color: '#1a3b5d' }}>PKR {ad.price}</div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
