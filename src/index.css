@@ -165,6 +165,98 @@ input:focus, select:focus, textarea:focus {
   background-color: var(--primary-light);
 }
 
+/* PakWheels Specific Styles */
+.top-bar {
+  background-color: var(--black);
+  color: var(--gray-300);
+  font-size: 13px;
+  padding: 8px 0;
+}
+
+.top-bar a:hover {
+  color: var(--white);
+}
+
+.section-header-blue {
+  background-color: #f2f3f3;
+  padding: 40px 0;
+  margin-bottom: 30px;
+}
+
+.card-pakwheels {
+  background: var(--white);
+  border-radius: 4px;
+  border: 1px solid var(--gray-200);
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+.card-pakwheels:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary);
+}
+
+.badge-featured {
+  background-color: #f5a623;
+  color: var(--white);
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 2px;
+  text-transform: uppercase;
+}
+
+.tabs-pakwheels {
+  display: flex;
+  gap: 30px;
+  border-bottom: 1px solid var(--gray-200);
+  margin-bottom: 30px;
+}
+
+.tab-item {
+  padding: 10px 0;
+  font-weight: 600;
+  color: var(--gray-500);
+  cursor: pointer;
+  position: relative;
+}
+
+.tab-item.active {
+  color: var(--black);
+}
+
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: var(--primary);
+}
+
+.managed-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.horizontal-scroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 20px;
+  padding: 10px 0 20px;
+  scrollbar-width: none; /* Firefox */
+}
+
+.horizontal-scroll::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
 /* Common Layout Components */
 .grid {
   display: grid;
@@ -193,4 +285,9 @@ input:focus, select:focus, textarea:focus {
 
 .animate-fade {
   animation: fadeIn var(--transition-slow) forwards;
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
