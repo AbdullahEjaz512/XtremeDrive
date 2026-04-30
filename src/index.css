@@ -271,6 +271,7 @@ input:focus, select:focus, textarea:focus {
 }
 @media (min-width: 1024px) {
   .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .grid-5 { grid-template-columns: repeat(5, 1fr); }
 }
 
 .section-padding {

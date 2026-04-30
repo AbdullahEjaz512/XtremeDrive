@@ -115,31 +115,29 @@ export default function Navbar() {
             <span>XTREME<span style={{ color: 'var(--primary)' }}>DRIVE</span></span>
           </Link>
 
-          {/* Desktop Nav Items */}
           <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', height: '100%', flex: 1 }}>
             <div style={{ display: 'flex', height: '100%' }}>
-              <div style={activeMenu === 'used' ? activeNavItemStyle : navItemStyle} onMouseEnter={() => handleMenuHover('used')}>
+              <Link to="/ads" style={activeMenu === 'used' ? activeNavItemStyle : navItemStyle} onMouseEnter={() => handleMenuHover('used')}>
                 Used Cars <ChevronDown size={14} />
-              </div>
-              <div style={activeMenu === 'new' ? activeNavItemStyle : navItemStyle} onMouseEnter={() => handleMenuHover('new')}>
+              </Link>
+              <Link to="/new-cars" style={activeMenu === 'new' ? activeNavItemStyle : navItemStyle} onMouseEnter={() => handleMenuHover('new')}>
                 New Cars <ChevronDown size={14} />
-              </div>
-              <div style={activeMenu === 'bikes' ? activeNavItemStyle : navItemStyle} onMouseEnter={() => handleMenuHover('bikes')}>
+              </Link>
+              <Link to="/bikes" style={activeMenu === 'bikes' ? activeNavItemStyle : navItemStyle} onMouseEnter={() => handleMenuHover('bikes')}>
                 Bikes <ChevronDown size={14} />
-              </div>
-              <div style={activeMenu === 'parts' ? activeNavItemStyle : navItemStyle} onMouseEnter={() => handleMenuHover('parts')}>
+              </Link>
+              <Link to="/auto-store" style={activeMenu === 'parts' ? activeNavItemStyle : navItemStyle} onMouseEnter={() => handleMenuHover('parts')}>
                 Auto Store <ChevronDown size={14} />
-              </div>
-              <div style={navItemStyle}>Videos</div>
-              <div style={navItemStyle}>Forums</div>
-              <div style={navItemStyle}>Blog</div>
+              </Link>
+              <Link to="#" style={navItemStyle}>Videos</Link>
+              <Link to="#" style={navItemStyle}>Forums</Link>
+              <Link to="#" style={navItemStyle}>Blog</Link>
             </div>
           </div>
 
-          {/* Actions */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
             <button 
-              onClick={() => { setIsOpen(false); navigate('/post-ad'); }}
+              onClick={() => { setIsOpen(false); navigate('/sell'); }}
               className="btn" 
               style={{ 
                 padding: '10px 24px', 
@@ -188,7 +186,7 @@ export default function Navbar() {
                   <div>
                     <h4 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--primary)', marginBottom: '15px' }}>SELL YOUR CAR</h4>
                     <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px' }}>
-                      <li><Link to="/post-ad" onClick={handleMenuLeave} style={{ color: '#444', fontWeight: 600 }}>Post an Ad</Link></li>
+                      <li><Link to="/sell" onClick={handleMenuLeave} style={{ color: '#444', fontWeight: 600 }}>Post an Ad</Link></li>
                     </ul>
                   </div>
                 </>
@@ -242,7 +240,7 @@ export default function Navbar() {
               <li><Link to="/new-cars" onClick={() => setIsOpen(false)}>New Cars</Link></li>
               <li><Link to="/bikes" onClick={() => setIsOpen(false)}>Bikes</Link></li>
               <li><Link to="/auto-store" onClick={() => setIsOpen(false)}>Auto Store</Link></li>
-              <li><Link to="/post-ad" onClick={() => setIsOpen(false)} style={{ color: 'var(--primary)' }}>Sell Your Car</Link></li>
+              <li><Link to="/sell" onClick={() => setIsOpen(false)} style={{ color: 'var(--primary)' }}>Sell Your Car</Link></li>
             </ul>
           </div>
         )}
