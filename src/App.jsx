@@ -10,6 +10,10 @@ import NewCarsPage from './pages/NewCarsPage';
 import BikesPage from './pages/BikesPage';
 import AutoStorePage from './pages/AutoStorePage';
 import SellLandingPage from './pages/SellLandingPage';
+import VideosPage from './pages/VideosPage';
+import ForumsPage from './pages/ForumsPage';
+import BlogPage from './pages/BlogPage';
+import ComparePage from './pages/ComparePage';
 
 function App() {
   return (
@@ -25,6 +29,10 @@ function App() {
           <Route path="/new-cars" element={<NewCarsPage />} />
           <Route path="/bikes" element={<BikesPage />} />
           <Route path="/auto-store" element={<AutoStorePage />} />
+          <Route path="/videos" element={<VideosPage />} />
+          <Route path="/forums" element={<ForumsPage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/compare" element={<ComparePage />} />
         </Routes>
       </main>
       <Footer />

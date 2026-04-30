@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
-  Car, Bike, Settings, PlusCircle, Search, Menu, X, Shield, 
-  DollarSign, MapPin, ChevronDown, Smartphone, User, Bell, 
-  MessageSquare, Heart, ShoppingCart, Globe, PlayCircle, BookOpen, Users 
+  Car, Settings, Search, Menu, X, ShieldCheck, 
+  DollarSign, ChevronDown, Smartphone, Globe, Star, 
+  Battery, FileText, CheckCircle, Zap, Map, Users, Layout
 } from 'lucide-react';
 
 export default function Navbar() {
@@ -11,7 +11,6 @@ export default function Navbar() {
   const [activeMenu, setActiveMenu] = useState(null); 
   const [isUrdu, setIsUrdu] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
 
   const handleMenuHover = (menu) => {
@@ -32,13 +31,30 @@ export default function Navbar() {
     gap: '4px',
     cursor: 'pointer',
     padding: '0 12px',
-    transition: 'background 0.2s',
+    transition: 'all 0.2s',
+    borderBottom: '3px solid transparent',
   };
 
   const activeNavItemStyle = {
     ...navItemStyle,
     background: 'rgba(0,0,0,0.1)',
+    borderBottom: '3px solid var(--primary)',
   };
+
+  const moreItems = [
+    { title: 'Cool Rides', sub: 'Member Rides Cars & Bikes', icon: <Star size={18} /> },
+    { title: 'Car Import', sub: 'Import your favourite Car', icon: <Globe size={18} /> },
+    { title: 'Car Battery', sub: 'Built for Every Drive', icon: <Battery size={18} /> },
+    { title: 'Car Insurance', sub: 'Get car insurance quote', icon: <ShieldCheck size={18} /> },
+    { title: 'Car Finance', sub: 'Compare plans and apply for car loan', icon: <DollarSign size={18} /> },
+    { title: 'PakWheels Service Centers', sub: 'Car maintenance & repair by certified experts', icon: <Settings size={18} /> },
+    { title: 'MTMIS Pakistan', sub: 'Online Vehicle Verification', icon: <CheckCircle size={18} /> },
+    { title: 'DLIMS Pakistan', sub: 'Driving License Verification System', icon: <FileText size={18} /> },
+    { title: 'Current Petrol Prices', sub: 'Check latest Petrol, Diesel and CNG Price', icon: <Zap size={18} /> },
+    { title: 'Car Registration', sub: 'Hassle-free Car Registration', icon: <Map size={18} /> },
+    { title: 'Car Ownership Transfer', sub: 'Hassle-free Car Transfer', icon: <Users size={18} /> },
+    { title: 'Auto Show', sub: 'Series of Annual Auto Shows', icon: <Layout size={18} /> },
+  ];
 
   return (
     <>
@@ -55,34 +71,13 @@ export default function Navbar() {
               onClick={() => setIsUrdu(!isUrdu)} 
               style={{ color: 'var(--primary)', fontWeight: 700, cursor: 'pointer', background: 'none', border: 'none' }}
             >
-              {isUrdu ? 'English' : 'اردو'}
+              اردو
             </button>
             <span style={{ color: 'var(--gray-600)' }}>|</span>
             <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-              <Link to="#" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <MessageSquare size={16} /> <span>{isUrdu ? 'ان باکس' : 'Inbox'}</span>
-              </Link>
-              <Link to="#" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ position: 'relative' }}>
-                  <Heart size={16} />
-                  <span style={{ position: 'absolute', top: '-8px', right: '-8px', background: 'var(--primary)', color: 'white', fontSize: '10px', padding: '0 4px', borderRadius: '10px' }}>0</span>
-                </div>
-                <span>{isUrdu ? 'محفوظ کردہ' : 'Saved'}</span>
-              </Link>
-              <Link to="#" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ position: 'relative' }}>
-                  <ShoppingCart size={16} />
-                  <span style={{ position: 'absolute', top: '-8px', right: '-8px', background: 'var(--primary)', color: 'white', fontSize: '10px', padding: '0 4px', borderRadius: '10px' }}>{cartCount}</span>
-                </div>
-                <span>{isUrdu ? 'کارٹ' : 'Cart'}</span>
-              </Link>
-              <button onClick={() => setShowAuthModal(true)} style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 600 }}>
-                {isUrdu ? 'سائن اپ' : 'Sign Up'}
-              </button>
+              <button onClick={() => setShowAuthModal(true)} style={{ color: 'white', fontWeight: 600 }}>Sign Up</button>
               <span style={{ color: 'var(--gray-600)' }}>|</span>
-              <button onClick={() => setShowAuthModal(true)} style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 600 }}>
-                {isUrdu ? 'سائن ان' : 'Sign In'}
-              </button>
+              <button onClick={() => setShowAuthModal(true)} style={{ color: 'white', fontWeight: 600 }}>Sign In</button>
             </div>
           </div>
         </div>
@@ -94,12 +89,13 @@ export default function Navbar() {
         zIndex: 100,
         background: 'var(--black)',
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        height: '60px',
       }} onMouseLeave={handleMenuLeave}>
         <div className="container" style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          height: '60px',
+          height: '100%',
         }}>
           {/* Logo */}
           <Link to="/" style={{
@@ -110,13 +106,14 @@ export default function Navbar() {
             alignItems: 'center',
             gap: '6px',
             marginRight: '20px'
-          }} onClick={() => { setIsOpen(false); handleMenuLeave(); }}>
+          }}>
             <Car size={28} style={{ color: 'var(--primary)' }} />
             <span>XTREME<span style={{ color: 'var(--primary)' }}>DRIVE</span></span>
           </Link>
 
-          <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', height: '100%', flex: 1 }}>
-            <div style={{ display: 'flex', height: '100%' }}>
+          {/* Desktop Nav Items */}
+          <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', height: '100%', marginLeft: 'auto' }}>
+            <div style={{ display: 'flex', height: '100%', gap: '5px' }}>
               <Link to="/ads" style={activeMenu === 'used' ? activeNavItemStyle : navItemStyle} onMouseEnter={() => handleMenuHover('used')}>
                 Used Cars <ChevronDown size={14} />
               </Link>
@@ -129,22 +126,60 @@ export default function Navbar() {
               <Link to="/auto-store" style={activeMenu === 'parts' ? activeNavItemStyle : navItemStyle} onMouseEnter={() => handleMenuHover('parts')}>
                 Auto Store <ChevronDown size={14} />
               </Link>
-              <Link to="#" style={navItemStyle}>Videos</Link>
-              <Link to="#" style={navItemStyle}>Forums</Link>
-              <Link to="#" style={navItemStyle}>Blog</Link>
+              <Link to="/videos" style={navItemStyle}>Videos</Link>
+              <Link to="/forums" style={navItemStyle}>Forums</Link>
+              <Link to="/blog" style={navItemStyle}>Blog</Link>
+              
+              <div style={{ position: 'relative', height: '100%', marginRight: '15px' }} onMouseEnter={() => handleMenuHover('more')}>
+                <div style={activeMenu === 'more' ? activeNavItemStyle : navItemStyle}>
+                  <div style={{ position: 'relative' }}>
+                    More <ChevronDown size={14} />
+                    <span style={{ 
+                      position: 'absolute', top: '-15px', right: '-5px', 
+                      background: 'var(--primary)', color: 'white', fontSize: '9px', 
+                      padding: '1px 4px', borderRadius: '10px', fontWeight: 800 
+                    }}>New</span>
+                  </div>
+                </div>
+                
+                {/* More Dropdown */}
+                {activeMenu === 'more' && (
+                  <div style={{
+                    position: 'absolute', top: '60px', left: '0', width: '320px',
+                    background: 'white', boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+                    borderRadius: '0 0 8px 8px', borderTop: '3px solid var(--primary)',
+                    maxHeight: '450px', overflowY: 'auto', zIndex: 101
+                  }}>
+                    {moreItems.map((item, idx) => (
+                      <Link key={idx} to="/compare" onClick={handleMenuLeave} style={{
+                        display: 'flex', gap: '15px', padding: '15px 20px',
+                        borderBottom: '1px solid #f5f5f5', transition: 'background 0.2s',
+                        textDecoration: 'none'
+                      }} onMouseOver={(e) => e.currentTarget.style.background = '#f9f9f9'} onMouseOut={(e) => e.currentTarget.style.background = 'white'}>
+                        <div style={{ color: 'var(--primary)' }}>{item.icon}</div>
+                        <div>
+                          <div style={{ fontSize: '14px', fontWeight: 700, color: '#333' }}>{item.title}</div>
+                          <div style={{ fontSize: '11px', color: '#999' }}>{item.sub}</div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          {/* Post Ad Button */}
+          <div style={{ display: 'flex', alignItems: 'center' }}>
             <button 
-              onClick={() => { setIsOpen(false); navigate('/sell'); }}
+              onClick={() => navigate('/sell')}
               className="btn" 
               style={{ 
                 padding: '10px 24px', 
                 borderRadius: '4px', 
                 fontSize: '14px', 
                 fontWeight: 700,
-                backgroundColor: '#b73439', // Dark red for Post an Ad
+                backgroundColor: '#b73439',
                 color: 'white',
                 display: 'flex',
                 alignItems: 'center',
@@ -154,19 +189,14 @@ export default function Navbar() {
               Post an Ad <ChevronDown size={14} />
             </button>
             
-            {/* Mobile Menu Toggle */}
-            <button 
-              className="mobile-only" 
-              onClick={() => setIsOpen(!isOpen)}
-              style={{ color: 'var(--white)' }}
-            >
+            <button className="mobile-only" onClick={() => setIsOpen(!isOpen)} style={{ color: 'var(--white)', marginLeft: '15px' }}>
               {isOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
           </div>
         </div>
 
         {/* Mega Menus Dropdown Panel (Desktop) */}
-        {activeMenu && (
+        {activeMenu && activeMenu !== 'more' && (
           <div className="desktop-only" style={{
             position: 'absolute', top: '60px', left: 0, width: '100%',
             background: 'var(--white)', borderTop: '1px solid var(--gray-200)',
@@ -179,8 +209,8 @@ export default function Navbar() {
                   <div>
                     <h4 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--primary)', marginBottom: '15px' }}>FIND USED CARS</h4>
                     <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px' }}>
-                      <li><Link to="/ads?category=CAR" onClick={handleMenuLeave} style={{ color: '#444', fontWeight: 600 }}>Find Used Cars for Sale</Link></li>
-                      <li><Link to="/ads?category=CAR&featured=true" onClick={handleMenuLeave} style={{ color: '#444' }}>Featured Used Cars</Link></li>
+                      <li><Link to="/ads" onClick={handleMenuLeave} style={{ color: '#444', fontWeight: 600 }}>Find Used Cars for Sale</Link></li>
+                      <li><Link to="/ads?featured=true" onClick={handleMenuLeave} style={{ color: '#444' }}>Featured Used Cars</Link></li>
                     </ul>
                   </div>
                   <div>
@@ -197,7 +227,7 @@ export default function Navbar() {
                     <h4 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--primary)', marginBottom: '15px' }}>NEW CARS</h4>
                     <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px' }}>
                       <li><Link to="/new-cars" onClick={handleMenuLeave} style={{ color: '#444', fontWeight: 600 }}>Find New Cars</Link></li>
-                      <li><Link to="#" onClick={handleMenuLeave} style={{ color: '#444' }}>Compare Cars</Link></li>
+                      <li><Link to="/compare" onClick={handleMenuLeave} style={{ color: '#444' }}>Compare Cars</Link></li>
                     </ul>
                   </div>
                 </>
@@ -208,7 +238,7 @@ export default function Navbar() {
                     <h4 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--primary)', marginBottom: '15px' }}>BIKES</h4>
                     <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px' }}>
                       <li><Link to="/bikes" onClick={handleMenuLeave} style={{ color: '#444', fontWeight: 600 }}>Find Used Bikes</Link></li>
-                      <li><Link to="/post-ad" onClick={handleMenuLeave} style={{ color: '#444' }}>Sell Your Bike</Link></li>
+                      <li><Link to="/sell" onClick={handleMenuLeave} style={{ color: '#444' }}>Sell Your Bike</Link></li>
                     </ul>
                   </div>
                 </>
@@ -240,10 +270,11 @@ export default function Navbar() {
               <li><Link to="/new-cars" onClick={() => setIsOpen(false)}>New Cars</Link></li>
               <li><Link to="/bikes" onClick={() => setIsOpen(false)}>Bikes</Link></li>
               <li><Link to="/auto-store" onClick={() => setIsOpen(false)}>Auto Store</Link></li>
-              <li><Link to="/sell" onClick={() => setIsOpen(false)} style={{ color: 'var(--primary)' }}>Sell Your Car</Link></li>
+              <li><Link to="/sell" onClick={() => setIsOpen(false)} style={{ color: '#b73439' }}>Sell Your Car</Link></li>
             </ul>
           </div>
         )}
+
         {/* Auth Modal */}
         {showAuthModal && (
           <div style={{
