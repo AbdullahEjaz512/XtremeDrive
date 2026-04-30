@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Search, MapPin, X, ChevronRight, Settings } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { 
+  Search, MapPin, X, ChevronRight, Settings, 
+  Bike, Shield, Zap, Tool, Award, Star
+} from 'lucide-react';
 
 export default function BikesPage() {
   const navigate = useNavigate();
@@ -9,14 +12,10 @@ export default function BikesPage() {
   const [selectedCity, setSelectedCity] = useState('');
   const [listings, setListings] = useState([]);
 
-  // Brand expansion state
-  const [expandedBrand, setExpandedBrand] = useState(null);
-  const [expandedCondition, setExpandedCondition] = useState('New');
-
   useEffect(() => {
     fetch('http://localhost:5000/api/ads?category=BIKE')
       .then(res => res.json())
-      .then(data => setListings(data))
+      .then(data => setListings(data.slice(0, 8)))
       .catch(err => console.error(err));
   }, []);
 
@@ -28,462 +27,139 @@ export default function BikesPage() {
     navigate(url);
   };
 
-  const makes = ['Honda', 'Yamaha', 'Suzuki', 'United', 'Road Prince'];
-  
-  const bikeModels = {
-    Honda: ['CD 70', 'CG 125', 'Pridor', 'CB 125F', 'CB 150F'],
-    Yamaha: ['YBR 125', 'YBR 125G', 'YB 125Z'],
-    Suzuki: ['GS 150', 'GR 150', 'GSX 125', 'GD 110S'],
-    United: ['US 70', 'US 100', 'US 125'],
-    'Road Prince': ['RP 70', 'RP 110', 'RP 125']
-  };
-
-  const newBikeCatalog = {
-    Honda: [
-      { name: 'Honda CD 70', price: '157,900', engine: '70cc', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400' },
-      { name: 'Honda CG 125', price: '234,900', engine: '125cc', img: 'https://images.unsplash.com/photo-1558981457-4b0598a39f99?w=400' },
-      { name: 'Honda Pridor', price: '208,900', engine: '100cc', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400' },
-      { name: 'Honda CB 125F', price: '390,900', engine: '125cc', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400' },
-      { name: 'Honda CB 150F', price: '493,900', engine: '150cc', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400' }
-    ],
-    Yamaha: [
-      { name: 'Yamaha YBR 125', price: '466,000', engine: '125cc', img: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=400' },
-      { name: 'Yamaha YBR 125G', price: '485,000', engine: '125cc', img: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=400' },
-      { name: 'Yamaha YB 125Z', price: '424,000', engine: '125cc', img: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=400' }
-    ],
-    Suzuki: [
-      { name: 'Suzuki GD 110S', price: '352,000', engine: '110cc', img: 'https://images.unsplash.com/photo-1471450411576-17c058114bfc?w=400' },
-      { name: 'Suzuki GS 150', price: '382,000', engine: '150cc', img: 'https://images.unsplash.com/photo-1471450411576-17c058114bfc?w=400' },
-      { name: 'Suzuki GR 150', price: '547,000', engine: '150cc', img: 'https://images.unsplash.com/photo-1471450411576-17c058114bfc?w=400' },
-      { name: 'Suzuki GSX 125', price: '499,000', engine: '125cc', img: 'https://images.unsplash.com/photo-1471450411576-17c058114bfc?w=400' }
-    ],
-    United: [
-      { name: 'United US 70', price: '109,500', engine: '70cc', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400' },
-      { name: 'United US 100', price: '117,000', engine: '100cc', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400' },
-      { name: 'United US 125', price: '165,000', engine: '125cc', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400' }
-    ],
-    'Road Prince': [
-      { name: 'Road Prince RP 70', price: '109,500', engine: '70cc', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400' },
-      { name: 'Road Prince RP 110', price: '119,500', engine: '110cc', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400' },
-      { name: 'Road Prince RP 125', price: '165,000', engine: '125cc', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400' }
-    ]
-  };
-
-  const popularBikes = [
-    { name: 'Honda CG 125', price: '234,900', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400&auto=format&fit=crop' },
-    { name: 'Yamaha YBR 125', price: '466,000', img: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=400&auto=format&fit=crop' },
-    { name: 'Honda CD 70', price: '157,900', img: 'https://images.unsplash.com/photo-1444927714506-8492d94b4e3d?w=400&auto=format&fit=crop' },
-    { name: 'Suzuki GS 150', price: '382,000', img: 'https://images.unsplash.com/photo-1471450411576-17c058114bfc?w=400&auto=format&fit=crop' }
+  const brands = [
+    { name: 'Honda', img: 'https://img.icons8.com/color/96/honda.png' },
+    { name: 'Yamaha', img: 'https://img.icons8.com/color/96/yamaha.png' },
+    { name: 'Suzuki', img: 'https://img.icons8.com/color/96/suzuki.png' },
+    { name: 'United', img: 'https://img.icons8.com/color/96/motorcycle.png' },
+    { name: 'Road Prince', img: 'https://img.icons8.com/color/96/motorcycle.png' },
   ];
 
-  const bikeAccessories = [
-    { name: 'Bike Parts', search: 'Parts', icon: '🔧' },
-    { name: 'Bike Accessories', search: 'Accessories', icon: '⚙️' },
-    { name: 'Bike Exhaust', search: 'Exhaust', icon: '💨' },
-    { name: 'Bike Helmet', search: 'Helmet', icon: '🪖' },
-    { name: 'Bike Air Filter', search: 'Filter', icon: '🌪️' },
-    { name: 'Bike Brake Shoe', search: 'Brake', icon: '🛑' },
-    { name: 'Bike Gloves', search: 'Gloves', icon: '🧤' },
-    { name: 'Bike Headlights', search: 'Headlight', icon: '💡' },
-    { name: 'All Purpose Cleaner', search: 'Cleaner', icon: '🧴' },
-    { name: 'Microfiber Cloth', search: 'Cloth', icon: '🧽' },
-    { name: 'Engine Oil', search: 'Oil', icon: '🛢️' },
-    { name: 'GPS Tracker', search: 'Tracker', icon: '📍' }
+  const popularNewBikes = [
+    { name: 'Honda CD 70', price: '157,900', engine: '70cc', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400' },
+    { name: 'Yamaha YBR 125', price: '466,000', engine: '125cc', img: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=400' },
+    { name: 'Honda CG 125', price: '234,900', engine: '125cc', img: 'https://images.unsplash.com/photo-1558981457-4b0598a39f99?w=400' },
+    { name: 'Suzuki GD 110S', price: '352,000', engine: '110cc', img: 'https://images.unsplash.com/photo-1471450411576-17c058114bfc?w=400' }
   ];
-
-  const cities = ['Karachi', 'Lahore', 'Islamabad', 'Rawalpindi', 'Peshawar'];
-
-  const handleBrandClick = (brandName, type) => {
-    setExpandedBrand(brandName);
-    setExpandedCondition(type);
-  };
-
-  const handleModelSelect = (modelName) => {
-    // ONLY for used bikes, redirect to filtering ads
-    navigate(`/ads?category=BIKE&condition=Used&make=${expandedBrand}&search=${modelName}`);
-    setExpandedBrand(null);
-  };
 
   return (
-    <div style={{ animation: 'fadeIn 0.5s ease', backgroundColor: 'var(--gray-50)', minHeight: '100vh', paddingBottom: '60px' }}>
-      {/* Hero Section */}
+    <div style={{ animation: 'fadeIn 0.5s ease', backgroundColor: '#f2f3f3', minHeight: '100vh', paddingBottom: '80px' }}>
+      
+      {/* Bike Hero Section */}
       <section style={{
-        background: 'linear-gradient(135deg, var(--black) 0%, #043b3a 100%)',
-        color: 'var(--white)',
-        padding: '60px 0',
+        background: 'linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=1600&auto=format&fit=crop)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        padding: '80px 0',
         textAlign: 'center',
+        color: 'white'
       }}>
-        <div className="container" style={{ maxWidth: '800px' }}>
-          <h1 style={{ fontSize: '36px', fontWeight: 700, marginBottom: '12px' }}>
-            Find Used & New Bikes in Pakistan
-          </h1>
-          <p style={{ fontSize: '16px', color: 'var(--gray-300)', marginBottom: '30px' }}>
-            Browse thousands of bikes or post a free ad to sell yours!
-          </p>
-
-          {/* Search Card */}
-          <div style={{
-            backgroundColor: 'var(--white)',
-            padding: '24px',
-            borderRadius: 'var(--border-radius-md)',
-            boxShadow: 'var(--shadow-lg)'
-          }}>
-            {/* Condition Tabs */}
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginBottom: '20px' }}>
-              {['Used', 'New'].map(type => (
-                <button
-                  key={type}
-                  onClick={() => setCondition(type)}
-                  style={{
-                    padding: '8px 24px',
-                    borderRadius: 'var(--border-radius-full)',
-                    fontWeight: 600,
-                    fontSize: '14px',
-                    border: '1px solid var(--gray-200)',
-                    backgroundColor: condition === type ? 'var(--primary)' : 'var(--white)',
-                    color: condition === type ? 'var(--white)' : 'var(--gray-700)',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                  {type} Bikes
-                </button>
-              ))}
-            </div>
-
-            <form onSubmit={handleSearch} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 120px', gap: '16px' }}>
-              <input
-                type="text"
-                placeholder="Bike Make or Model (e.g. Honda 125)"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                style={{
-                  border: '1px solid var(--gray-200)',
-                  padding: '12px 16px',
-                  borderRadius: 'var(--border-radius-sm)',
-                  fontSize: '15px'
-                }}
-              />
-              <select
-                value={selectedCity}
-                onChange={(e) => setSelectedCity(e.target.value)}
-                style={{
-                  border: '1px solid var(--gray-200)',
-                  padding: '12px 16px',
-                  borderRadius: 'var(--border-radius-sm)',
-                  fontSize: '15px'
-                }}
-              >
-                <option value="">All Cities</option>
-                {cities.map(city => <option key={city} value={city}>{city}</option>)}
-              </select>
-              <button type="submit" className="btn btn-primary" style={{ padding: '0 20px', fontSize: '15px' }}>
-                <Search size={18} /> Search
-              </button>
-            </form>
-          </div>
-        </div>
-      </section>
-
-      {/* Brand Overlay Selector */}
-      {expandedBrand && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-          backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 110, display: 'flex',
-          alignItems: 'center', justifyContent: 'center', animation: 'fadeIn 0.2s ease'
-        }}>
-          <div style={{
-            backgroundColor: 'var(--white)', padding: '30px', borderRadius: 'var(--border-radius-lg)',
-            maxWidth: '650px', width: '90%', maxHeight: '80vh', overflowY: 'auto',
-            boxShadow: 'var(--shadow-2xl)', position: 'relative'
-          }}>
-            <button onClick={() => setExpandedBrand(null)} style={{
-              position: 'absolute', top: '20px', right: '20px', color: 'var(--gray-500)',
-              background: 'none', border: 'none', cursor: 'pointer'
-            }}>
-              <X size={24} />
+        <div className="container" style={{ maxWidth: '850px' }}>
+          <h1 style={{ fontSize: '36px', fontWeight: 700, marginBottom: '20px' }}>Find New & Used Bikes in Pakistan</h1>
+          <p style={{ fontSize: '18px', marginBottom: '40px', opacity: 0.9 }}>Browse from over 10,000+ bike listings</p>
+          
+          <div className="glass" style={{ background: 'white', padding: '10px', borderRadius: '4px', display: 'flex', gap: '5px', alignItems: 'center' }}>
+            <input 
+              type="text" placeholder="Bike Make or Model" 
+              style={{ border: 'none', flex: 2, height: '45px', color: 'black' }}
+              value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <select style={{ border: 'none', borderLeft: '1px solid #eee', flex: 1, height: '45px', color: 'black' }}
+              value={selectedCity} onChange={(e) => setSelectedCity(e.target.value)}>
+              <option value="">All Cities</option>
+              {['Karachi', 'Lahore', 'Islamabad', 'Rawalpindi'].map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+            <button onClick={handleSearch} className="btn btn-primary" style={{ padding: '0 30px', height: '45px', borderRadius: '4px' }}>
+              <Search size={20} />
             </button>
-            <h3 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '20px', color: 'var(--black)' }}>
-              {expandedBrand} - Available {expandedCondition} Bikes
-            </h3>
-
-            {expandedCondition === 'New' ? (
-              /* New Bike Catalog Showroom style */
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                {newBikeCatalog[expandedBrand]?.map(bike => (
-                  <div
-                    key={bike.name}
-                    style={{
-                      border: '1px solid var(--gray-200)',
-                      borderRadius: 'var(--border-radius-md)',
-                      overflow: 'hidden',
-                      backgroundColor: 'var(--gray-50)'
-                    }}
-                  >
-                    <div style={{ height: '140px', backgroundColor: 'var(--gray-200)' }}>
-                      <img src={bike.img} alt={bike.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    </div>
-                    <div style={{ padding: '16px' }}>
-                      <h4 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--black)' }}>{bike.name}</h4>
-                      <p style={{ fontSize: '13px', color: 'var(--gray-500)', margin: '4px 0' }}>Engine: {bike.engine}</p>
-                      <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--primary)', marginTop: '8px' }}>
-                        PKR {bike.price}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              /* Used Bike Models array style (links to search ads) */
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {bikeModels[expandedBrand]?.map(model => (
-                  <div
-                    key={model}
-                    onClick={() => handleModelSelect(model)}
-                    className="hover-lift"
-                    style={{
-                      padding: '16px 20px', backgroundColor: 'var(--gray-50)',
-                      borderRadius: 'var(--border-radius-md)', cursor: 'pointer',
-                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                      fontWeight: 600, border: '1px solid var(--gray-200)'
-                    }}
-                  >
-                    <span>{model}</span>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: 'var(--primary)' }}>
-                      View Ads <ChevronRight size={18} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         </div>
-      )}
+      </section>
 
-      {/* Popular New Bikes */}
-      <section className="container" style={{ marginTop: '50px' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '24px', color: 'var(--black)' }}>Popular New Bikes</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '24px' }}>
-          {popularBikes.map(bike => (
-            <div
-              key={bike.name}
-              onClick={() => navigate(`/ads?category=BIKE&search=${bike.name.split(' ')[1]}`)}
-              className="hover-lift"
-              style={{
-                backgroundColor: 'var(--white)',
-                borderRadius: 'var(--border-radius-md)',
-                border: '1px solid var(--gray-200)',
-                overflow: 'hidden',
-                cursor: 'pointer'
-              }}
-            >
-              <div style={{ height: '160px', backgroundColor: 'var(--gray-100)', position: 'relative' }}>
-                <img src={bike.img} alt={bike.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+      {/* New Bikes by Brand */}
+      <section className="section-padding">
+        <div className="container">
+          <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#1a3b5d', marginBottom: '30px', textAlign: 'center' }}>New Bikes by Brand</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '20px' }}>
+            {brands.map(brand => (
+              <div key={brand.name} className="card-pakwheels hover-lift" style={{ textAlign: 'center', padding: '20px', cursor: 'pointer' }} onClick={() => navigate('/ads?category=BIKE&make=' + brand.name)}>
+                <img src={brand.img} alt={brand.name} style={{ width: '60px', height: '60px', objectFit: 'contain', marginBottom: '15px' }} />
+                <div style={{ fontWeight: 700, fontSize: '15px', color: '#1a3b5d' }}>{brand.name}</div>
               </div>
-              <div style={{ padding: '16px', textAlign: 'center' }}>
-                <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '6px' }}>{bike.name}</h3>
-                <p style={{ color: 'var(--primary)', fontWeight: 600 }}>PKR {bike.price}</p>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Bike Accessories Section */}
-      <section className="container" style={{ marginTop: '50px' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '24px', color: 'var(--black)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Settings size={26} style={{ color: 'var(--primary)' }} />
-          Bike Accessories
-        </h2>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
-          gap: '20px'
-        }}>
-          {bikeAccessories.map(acc => (
-            <div
-              key={acc.name}
-              onClick={() => navigate(`/ads?category=AUTOPART&search=${acc.search}`)}
-              className="hover-lift"
-              style={{
-                backgroundColor: 'var(--white)',
-                border: '1px solid var(--gray-200)',
-                borderRadius: 'var(--border-radius-md)',
-                padding: '24px 16px',
-                textAlign: 'center',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-              }}
-              onMouseOver={(e) => e.target.style.borderColor = 'var(--primary)'}
-              onMouseOut={(e) => e.target.style.borderColor = 'var(--gray-200)'}
-            >
-              <div style={{ fontSize: '32px', marginBottom: '12px' }}>{acc.icon}</div>
-              <h4 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--gray-800)' }}>{acc.name}</h4>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* New Bikes by Make */}
-      <section className="container" style={{ marginTop: '50px' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '24px', color: 'var(--black)' }}>New Bikes by Make</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '20px' }}>
-          {makes.map(make => (
-            <div
-              key={make}
-              onClick={() => handleBrandClick(make, 'New')}
-              className="hover-lift"
-              style={{
-                padding: '24px 20px',
-                backgroundColor: 'var(--white)',
-                border: '1px solid var(--gray-200)',
-                borderRadius: 'var(--border-radius-md)',
-                textAlign: 'center',
-                cursor: 'pointer',
-                fontWeight: 600,
-                fontSize: '18px',
-                transition: 'all 0.2s'
-              }}
-              onMouseOver={(e) => e.target.style.borderColor = 'var(--primary)'}
-              onMouseOut={(e) => e.target.style.borderColor = 'var(--gray-200)'}
-            >
-              {make}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Used Bikes by Make */}
-      <section className="container" style={{ marginTop: '50px' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '24px', color: 'var(--black)' }}>Used Bikes by Make</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '20px' }}>
-          {makes.map(make => (
-            <div
-              key={make}
-              onClick={() => handleBrandClick(make, 'Used')}
-              className="hover-lift"
-              style={{
-                padding: '24px 20px',
-                backgroundColor: 'var(--white)',
-                border: '1px solid var(--gray-200)',
-                borderRadius: 'var(--border-radius-md)',
-                textAlign: 'center',
-                cursor: 'pointer',
-                fontWeight: 600,
-                fontSize: '18px',
-                transition: 'all 0.2s'
-              }}
-              onMouseOver={(e) => e.target.style.borderColor = 'var(--primary)'}
-              onMouseOut={(e) => e.target.style.borderColor = 'var(--gray-200)'}
-            >
-              {make}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Used Bikes by City */}
-      <section className="container" style={{ marginTop: '50px' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '24px', color: 'var(--black)' }}>Used Bikes by City</h2>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
-          {cities.map(city => (
-            <div
-              key={city}
-              onClick={() => navigate(`/ads?category=BIKE&city=${city}`)}
-              className="hover-lift"
-              style={{
-                padding: '12px 24px',
-                backgroundColor: 'var(--white)',
-                border: '1px solid var(--gray-200)',
-                borderRadius: 'var(--border-radius-full)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                fontWeight: 500
-              }}
-            >
-              <MapPin size={16} style={{ color: 'var(--primary)' }} />
-              {city}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Recent Bike Listings */}
-      <section className="container" style={{ marginTop: '50px' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '24px', color: 'var(--black)' }}>Recent Bike Listings</h2>
-        {listings.length === 0 ? (
-          <p style={{ color: 'var(--gray-500)', fontStyle: 'italic' }}>No active bike listings found.</p>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '24px' }}>
-            {listings.map(ad => (
-              <div
-                key={ad.id}
-                className="hover-lift"
-                onClick={() => navigate(`/ads/${ad.id}`)}
-                style={{
-                  background: 'var(--white)',
-                  borderRadius: 'var(--border-radius-md)',
-                  overflow: 'hidden',
-                  cursor: 'pointer',
-                  border: '1px solid var(--gray-200)',
-                  boxShadow: 'var(--shadow-sm)',
-                }}
-              >
-                <div style={{ position: 'relative', height: '180px' }}>
-                  <img
-                    src={ad.images.split(',')[0]}
-                    alt={ad.title}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                  <span style={{
-                    position: 'absolute',
-                    top: '12px',
-                    left: '12px',
-                    backgroundColor: ad.condition === 'New' ? '#D97706' : 'var(--primary)',
-                    color: 'var(--white)',
-                    padding: '4px 10px',
-                    borderRadius: 'var(--border-radius-full)',
-                    fontSize: '12px',
-                    fontWeight: 600
-                  }}>
-                    {ad.condition}
-                  </span>
-                </div>
-                
-                <div style={{ padding: '16px' }}>
-                  <h3 style={{
-                    fontSize: '16px',
-                    fontWeight: 600,
-                    marginBottom: '8px',
-                    color: 'var(--gray-900)',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis'
-                  }}>
-                    {ad.title}
-                  </h3>
-                  <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--primary)', marginBottom: '12px' }}>
-                    PKR {ad.price.toLocaleString()}
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    fontSize: '13px',
-                    color: 'var(--gray-500)',
-                    borderTop: '1px solid var(--gray-100)',
-                    paddingTop: '12px'
-                  }}>
-                    <span>{ad.city}</span>
-                    <span>{ad.mileage ? `${ad.mileage.toLocaleString()} km` : 'New'}</span>
+      {/* Featured New Bikes */}
+      <section style={{ backgroundColor: 'white', padding: '60px 0' }}>
+        <div className="container">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+            <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#1a3b5d' }}>Featured New Bikes</h2>
+            <Link to="/ads?category=BIKE&condition=New" style={{ color: 'var(--primary)', fontWeight: 600 }}>View all new bikes</Link>
+          </div>
+          <div className="grid grid-4">
+            {popularNewBikes.map((bike, idx) => (
+              <div key={idx} className="card-pakwheels hover-lift" style={{ padding: '0', overflow: 'hidden' }}>
+                <img src={bike.img} style={{ width: '100%', height: '150px', objectFit: 'cover' }} />
+                <div style={{ padding: '15px', textAlign: 'center' }}>
+                  <h4 style={{ fontSize: '16px', fontWeight: 700, color: '#1a3b5d', marginBottom: '5px' }}>{bike.name}</h4>
+                  <div style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '15px' }}>PKR {bike.price}</div>
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '3px', marginTop: '10px' }}>
+                    {[1,2,3,4,5].map(s => <Star key={s} size={12} fill={s <= 4 ? "#f5a623" : "none"} color="#f5a623" />)}
                   </div>
                 </div>
               </div>
             ))}
           </div>
-        )}
+        </div>
       </section>
+
+      {/* Used Bikes by City */}
+      <section className="section-padding">
+        <div className="container">
+          <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#1a3b5d', marginBottom: '30px' }}>Used Bikes by City</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '15px' }}>
+            {['Karachi', 'Lahore', 'Islamabad', 'Rawalpindi', 'Peshawar', 'Multan', 'Faisalabad', 'Gujranwala'].map(city => (
+              <div 
+                key={city} 
+                className="card-pakwheels hover-lift" 
+                style={{ padding: '15px', textAlign: 'center', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
+                onClick={() => navigate(`/ads?category=BIKE&city=${city}`)}
+              >
+                <MapPin size={16} color="var(--primary)" />
+                <span style={{ fontWeight: 600 }}>Bikes in {city}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Bike Accessories */}
+      <section style={{ backgroundColor: 'white', padding: '60px 0' }}>
+        <div className="container">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+            <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#1a3b5d' }}>Bike Accessories & Parts</h2>
+            <Link to="/ads?category=AUTOPART" style={{ color: 'var(--primary)', fontWeight: 600 }}>Browse Store</Link>
+          </div>
+          <div className="grid grid-4">
+            {[
+              { name: 'Helmets', img: 'https://images.unsplash.com/photo-1590528709736-233668854839?w=400' },
+              { name: 'Engine Oil', img: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400' },
+              { name: 'Security Alarms', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400' },
+              { name: 'Tyres', img: 'https://images.unsplash.com/photo-1611245831313-149497638853?w=400' }
+            ].map((item, idx) => (
+              <div key={idx} className="card-pakwheels hover-lift" style={{ padding: '0', overflow: 'hidden' }}>
+                <img src={item.img} style={{ width: '100%', height: '140px', objectFit: 'cover' }} />
+                <div style={{ padding: '15px', textAlign: 'center' }}>
+                  <h4 style={{ fontSize: '15px', fontWeight: 700 }}>{item.name}</h4>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 }

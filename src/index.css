@@ -287,7 +287,71 @@ input:focus, select:focus, textarea:focus {
   animation: fadeIn var(--transition-slow) forwards;
 }
 
-@keyframes scaleUp {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+/* Mobile Specific Fixes & Responsive Utilities */
+@media (max-width: 768px) {
+  .section-padding {
+    padding: 40px 0;
+  }
+  
+  h1 { font-size: 28px !important; }
+  h2 { font-size: 22px !important; }
+  
+  .container {
+    padding: 0 15px;
+  }
+
+  /* Grid Fixes */
+  .grid-2, .grid-3, .grid-4 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Search Hero Fixes */
+  .hero-search-container {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  /* Navbar Mobile */
+  .desktop-nav {
+    display: none !important;
+  }
+  
+  .mobile-menu-btn {
+    display: block !important;
+  }
+
+  /* Ads Sidebar Fix */
+  .ads-layout {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .filters-sidebar {
+    display: none; /* Hide by default on mobile, could add a 'show' class */
+  }
+
+  /* Detail Page Fix */
+  .detail-layout {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Utils */
+.text-primary { color: var(--primary); }
+.font-bold { font-weight: 700; }
+.mb-20 { margin-bottom: 20px; }
+.mt-40 { margin-top: 40px; }
+
+/* Custom Scrollbar for Horizontal Lists */
+.horizontal-scroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 15px;
+  padding: 5px 0 15px;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Responsive Images */
+img {
+  max-width: 100%;
+  height: auto;
 }

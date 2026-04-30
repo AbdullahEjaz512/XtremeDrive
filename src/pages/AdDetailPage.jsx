@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Phone, Calendar, Gauge, Fuel, ShieldAlert, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { 
+  Phone, Calendar, Gauge, Fuel, ShieldAlert, CheckCircle, 
+  ChevronLeft, ChevronRight, MapPin, Share2, Heart, Flag,
+  Settings, User, Info, MessageCircle, Clock, Award
+} from 'lucide-react';
 
 export default function AdDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [ad, setAd] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [ads, setAds] = useState([]); // For related ads
   
   const [revealPhone, setRevealPhone] = useState(false);
   const [activeImageIdx, setActiveImageIdx] = useState(0);
@@ -26,6 +31,12 @@ export default function AdDetailPage() {
         console.error(err);
         setLoading(false);
       });
+
+    // Fetch related ads
+    fetch('http://localhost:5000/api/ads')
+      .then(res => res.json())
+      .then(data => setAds(data.slice(0, 4)))
+      .catch(err => console.error(err));
   }, [id]);
 
   if (loading) {
@@ -47,297 +58,220 @@ export default function AdDetailPage() {
 
   const images = ad.images.split(',');
 
-  const nextImage = () => {
-    setActiveImageIdx((prev) => (prev + 1) % images.length);
-  };
-
-  const prevImage = () => {
-    setActiveImageIdx((prev) => (prev - 1 + images.length) % images.length);
-  };
-
   return (
-    <div style={{ animation: 'fadeIn 0.5s ease', backgroundColor: 'var(--gray-50)', paddingBottom: '60px' }}>
-      {/* Detail Header */}
-      <section style={{ backgroundColor: 'var(--white)', padding: '24px 0', borderBottom: '1px solid var(--gray-200)' }}>
+    <div style={{ animation: 'fadeIn 0.5s ease', backgroundColor: '#f2f3f3', paddingBottom: '60px' }}>
+      
+      {/* Detail Header / Breadcrumbs */}
+      <section style={{ backgroundColor: 'var(--white)', padding: '15px 0', borderBottom: '1px solid #e1e1e1' }}>
         <div className="container">
-          <button onClick={() => navigate(-1)} style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px',
-            color: 'var(--gray-600)',
-            fontWeight: 600,
-            marginBottom: '16px',
-            fontSize: '14px'
-          }}>
-            <ChevronLeft size={18} /> Back
-          </button>
-          
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
-            <div>
-              <h1 style={{ fontSize: '32px', fontWeight: 700, color: 'var(--black)', marginBottom: '8px' }}>
-                {ad.title}
-              </h1>
-              <div style={{ display: 'flex', gap: '12px', alignItems: 'center', color: 'var(--gray-600)', fontSize: '14px' }}>
-                <span><strong>City:</strong> {ad.city}</span>
-                <span>|</span>
-                <span><strong>Condition:</strong> {ad.condition}</span>
-                {ad.createdAt && (
-                  <>
-                    <span>|</span>
-                    <span>Posted on {new Date(ad.createdAt).toLocaleDateString()}</span>
-                  </>
-                )}
-              </div>
+          <div style={{ fontSize: '13px', color: '#666', marginBottom: '10px' }}>
+            <Link to="/" style={{ color: 'var(--primary)' }}>Home</Link> / 
+            <Link to="/ads" style={{ color: 'var(--primary)', marginLeft: '5px' }}>Used Cars</Link> / 
+            <span style={{ marginLeft: '5px' }}>{ad.title}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#1a3b5d' }}>{ad.title}</h1>
+            <div style={{ display: 'flex', gap: '15px' }}>
+              <button style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '13px', color: 'var(--primary)', fontWeight: 600, background: 'none', border: 'none' }}>
+                <Share2 size={16} /> Share
+              </button>
+              <button style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '13px', color: 'var(--primary)', fontWeight: 600, background: 'none', border: 'none' }}>
+                <Heart size={16} /> Favorite
+              </button>
+              <button style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '13px', color: '#999', fontWeight: 600, background: 'none', border: 'none' }}>
+                <Flag size={16} /> Report
+              </button>
             </div>
-
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '32px', fontWeight: 800, color: 'var(--primary)', lineHeight: '1.2' }}>
-                PKR {ad.price.toLocaleString()}
-              </div>
-            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginTop: '10px', fontSize: '14px', color: '#666' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><MapPin size={14} color="var(--primary)" /> {ad.city}</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><Clock size={14} color="#999" /> Updated about 2 hours ago</span>
           </div>
         </div>
       </section>
 
-      {/* Main content split */}
-      <section className="container" style={{ marginTop: '40px' }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 3fr))',
-          gap: '30px'
-        }}>
-          {/* Left Column: Media & Specs */}
-          <div style={{ gridColumn: 'span 2' }}>
-            {/* Image Slider */}
-            <div style={{
-              backgroundColor: 'var(--white)',
-              borderRadius: 'var(--border-radius-md)',
-              border: '1px solid var(--gray-200)',
-              padding: '16px',
-              marginBottom: '30px'
-            }}>
-              <div style={{
-                position: 'relative',
-                height: '400px',
-                backgroundColor: 'var(--black)',
-                borderRadius: 'var(--border-radius-sm)',
-                overflow: 'hidden'
-              }}>
-                <img
-                  src={images[activeImageIdx]}
-                  alt={`${ad.title} ${activeImageIdx + 1}`}
-                  style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                />
-
-                {images.length > 1 && (
-                  <>
-                    <button onClick={prevImage} style={{
-                      position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)',
-                      backgroundColor: 'rgba(255,255,255,0.8)', padding: '10px', borderRadius: '50%'
-                    }}><ChevronLeft size={20} /></button>
-
-                    <button onClick={nextImage} style={{
-                      position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)',
-                      backgroundColor: 'rgba(255,255,255,0.8)', padding: '10px', borderRadius: '50%'
-                    }}><ChevronRight size={20} /></button>
-                  </>
-                )}
-              </div>
-
-              {/* Thumbnails */}
-              {images.length > 1 && (
-                <div style={{ display: 'flex', gap: '10px', marginTop: '16px', overflowX: 'auto', paddingBottom: '8px' }}>
-                  {images.map((img, idx) => (
-                    <img
-                      key={idx}
-                      src={img}
-                      alt="thumbnail"
-                      onClick={() => setActiveImageIdx(idx)}
-                      style={{
-                        width: '80px', height: '60px', objectFit: 'cover', borderRadius: 'var(--border-radius-sm)',
-                        cursor: 'pointer', border: activeImageIdx === idx ? '3px solid var(--primary)' : '1px solid var(--gray-200)',
-                        transition: 'border 0.2s'
-                      }}
-                    />
-                  ))}
+      <section className="container" style={{ marginTop: '30px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '30px', alignItems: 'start' }}>
+          
+          {/* Left Column: Media & Info */}
+          <div>
+            {/* Gallery Card */}
+            <div className="card-pakwheels" style={{ padding: '0', overflow: 'hidden' }}>
+              <div style={{ position: 'relative', height: '450px', backgroundColor: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <img src={images[activeImageIdx]} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                <button onClick={() => setActiveImageIdx(prev => (prev - 1 + images.length) % images.length)} style={{ position: 'absolute', left: '15px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none', borderRadius: '50%', padding: '10px', cursor: 'pointer' }}>
+                  <ChevronLeft size={24} />
+                </button>
+                <button onClick={() => setActiveImageIdx(prev => (prev + 1) % images.length)} style={{ position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none', borderRadius: '50%', padding: '10px', cursor: 'pointer' }}>
+                  <ChevronRight size={24} />
+                </button>
+                <div style={{ position: 'absolute', bottom: '15px', right: '15px', background: 'rgba(0,0,0,0.7)', color: 'white', padding: '4px 12px', borderRadius: '4px', fontSize: '12px' }}>
+                  {activeImageIdx + 1} / {images.length}
                 </div>
-              )}
+              </div>
+              <div style={{ display: 'flex', gap: '10px', padding: '15px', overflowX: 'auto', backgroundColor: '#f8f9fa' }}>
+                {images.map((img, idx) => (
+                  <img 
+                    key={idx} src={img} 
+                    onClick={() => setActiveImageIdx(idx)}
+                    style={{ width: '80px', height: '60px', objectFit: 'cover', borderRadius: '4px', cursor: 'pointer', border: activeImageIdx === idx ? '2px solid var(--primary)' : '2px solid transparent' }} 
+                  />
+                ))}
+              </div>
             </div>
 
-            {/* Specifications Grid */}
-            <div style={{
-              backgroundColor: 'var(--white)',
-              borderRadius: 'var(--border-radius-md)',
-              border: '1px solid var(--gray-200)',
-              padding: '30px',
-              marginBottom: '30px'
-            }}>
-              <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '24px', borderBottom: '1px solid var(--gray-100)', paddingBottom: '12px' }}>
-                Specifications
-              </h3>
-              
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
-                gap: '24px'
-              }}>
-                {ad.year && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <Calendar size={24} style={{ color: 'var(--primary)' }} />
-                    <div>
-                      <div style={{ fontSize: '13px', color: 'var(--gray-500)' }}>Year</div>
-                      <div style={{ fontWeight: 600 }}>{ad.year}</div>
-                    </div>
+            {/* Main Spec Row (Icon Based) */}
+            <div className="card-pakwheels" style={{ display: 'flex', justifyContent: 'space-around', textAlign: 'center', padding: '20px 0', marginTop: '20px' }}>
+              <div>
+                <Calendar size={28} color="var(--primary)" style={{ marginBottom: '8px' }} />
+                <div style={{ fontSize: '12px', color: '#999' }}>Year</div>
+                <div style={{ fontWeight: 700, color: '#1a3b5d' }}>{ad.year}</div>
+              </div>
+              <div style={{ borderLeft: '1px solid #eee' }}></div>
+              <div style={{ flex: 1 }}>
+                <Gauge size={28} color="var(--primary)" style={{ marginBottom: '8px' }} />
+                <div style={{ fontSize: '12px', color: '#999' }}>Mileage</div>
+                <div style={{ fontWeight: 700, color: '#1a3b5d' }}>{ad.mileage?.toLocaleString()} km</div>
+              </div>
+              <div style={{ borderLeft: '1px solid #eee' }}></div>
+              <div style={{ flex: 1 }}>
+                <Fuel size={28} color="var(--primary)" style={{ marginBottom: '8px' }} />
+                <div style={{ fontSize: '12px', color: '#999' }}>Fuel Type</div>
+                <div style={{ fontWeight: 700, color: '#1a3b5d' }}>{ad.fuelType || 'Petrol'}</div>
+              </div>
+              <div style={{ borderLeft: '1px solid #eee' }}></div>
+              <div style={{ flex: 1 }}>
+                <Settings size={28} color="var(--primary)" style={{ marginBottom: '8px' }} />
+                <div style={{ fontSize: '12px', color: '#999' }}>Transmission</div>
+                <div style={{ fontWeight: 700, color: '#1a3b5d' }}>Manual</div>
+              </div>
+            </div>
+
+            {/* Detailed Specs Table */}
+            <div className="card-pakwheels" style={{ marginTop: '20px', padding: '25px' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1a3b5d', marginBottom: '20px', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>Vehicle Specifications</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'x 40px' }}>
+                {[
+                  { label: 'Registered City', value: ad.city },
+                  { label: 'Color', value: 'White' },
+                  { label: 'Engine Capacity', value: '1800 cc' },
+                  { label: 'Assembly', value: 'Local' },
+                  { label: 'Body Type', value: 'Sedan' },
+                  { label: 'Last Updated', value: '2 hours ago' },
+                  { label: 'Ad ID', value: ad.id.slice(0, 8).toUpperCase() }
+                ].map((spec, idx) => (
+                  <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid #f8f9fa', fontSize: '14px' }}>
+                    <span style={{ color: '#666' }}>{spec.label}</span>
+                    <span style={{ fontWeight: 600, color: '#1a3b5d' }}>{spec.value}</span>
                   </div>
-                )}
-                {ad.mileage !== null && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <Gauge size={24} style={{ color: 'var(--primary)' }} />
-                    <div>
-                      <div style={{ fontSize: '13px', color: 'var(--gray-500)' }}>Mileage</div>
-                      <div style={{ fontWeight: 600 }}>{ad.mileage.toLocaleString()} km</div>
-                    </div>
-                  </div>
-                )}
-                {ad.fuelType && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <Fuel size={24} style={{ color: 'var(--primary)' }} />
-                    <div>
-                      <div style={{ fontSize: '13px', color: 'var(--gray-500)' }}>Fuel Type</div>
-                      <div style={{ fontWeight: 600 }}>{ad.fuelType}</div>
-                    </div>
-                  </div>
-                )}
-                {ad.transmission && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <Car size={24} style={{ color: 'var(--primary)' }} />
-                    <div>
-                      <div style={{ fontSize: '13px', color: 'var(--gray-500)' }}>Transmission</div>
-                      <div style={{ fontWeight: 600 }}>{ad.transmission}</div>
-                    </div>
-                  </div>
-                )}
+                ))}
               </div>
             </div>
 
             {/* Description */}
-            <div style={{
-              backgroundColor: 'var(--white)',
-              borderRadius: 'var(--border-radius-md)',
-              border: '1px solid var(--gray-200)',
-              padding: '30px',
-              marginBottom: '30px'
-            }}>
-              <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '16px', borderBottom: '1px solid var(--gray-100)', paddingBottom: '12px' }}>
-                Seller's Description
-              </h3>
-              <p style={{ color: 'var(--gray-700)', fontSize: '15px', lineHeight: '1.8', whiteSpace: 'pre-wrap' }}>
-                {ad.description}
+            <div className="card-pakwheels" style={{ marginTop: '20px', padding: '25px' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1a3b5d', marginBottom: '20px', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>Seller's Description</h3>
+              <p style={{ fontSize: '14px', lineHeight: '1.8', color: '#444', whiteSpace: 'pre-wrap' }}>
+                {ad.description || 'No detailed description available for this vehicle.'}
               </p>
             </div>
 
             {/* Features */}
             {ad.features && (
-              <div style={{
-                backgroundColor: 'var(--white)',
-                borderRadius: 'var(--border-radius-md)',
-                border: '1px solid var(--gray-200)',
-                padding: '30px'
-              }}>
-                <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '24px', borderBottom: '1px solid var(--gray-100)', paddingBottom: '12px' }}>
-                  Features
-                </h3>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
-                  {ad.features.split(',').map(feat => (
-                    <span key={feat} style={{
-                      display: 'flex', alignItems: 'center', gap: '6px',
-                      backgroundColor: 'var(--gray-50)', border: '1px solid var(--gray-200)',
-                      padding: '8px 16px', borderRadius: 'var(--border-radius-full)',
-                      fontSize: '14px', color: 'var(--gray-800)', fontWeight: 500
-                    }}>
-                      <CheckCircle size={16} style={{ color: 'var(--primary)' }} />
-                      {feat.trim()}
-                    </span>
+              <div className="card-pakwheels" style={{ marginTop: '20px', padding: '25px' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1a3b5d', marginBottom: '20px', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>Car Features</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px' }}>
+                  {ad.features.split(',').map((f, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#1a3b5d', fontWeight: 600 }}>
+                      <CheckCircle size={16} color="var(--primary)" /> {f.trim()}
+                    </div>
                   ))}
                 </div>
               </div>
             )}
           </div>
 
-          {/* Right Column: Seller Profile & Safety */}
+          {/* Right Column: Seller & Contact */}
           <div>
+            {/* Price Card */}
+            <div className="card-pakwheels" style={{ textAlign: 'center', padding: '25px', marginBottom: '20px' }}>
+              <div style={{ fontSize: '32px', fontWeight: 800, color: 'var(--primary)' }}>PKR {ad.price.toLocaleString()}</div>
+              <div style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>Managed by XtremeDrive <Award size={14} color="var(--primary)" /></div>
+            </div>
+
             {/* Seller Contact Card */}
-            <div style={{
-              backgroundColor: 'var(--white)',
-              borderRadius: 'var(--border-radius-md)',
-              border: '1px solid var(--gray-200)',
-              padding: '30px',
-              position: 'sticky',
-              top: '90px',
-              marginBottom: '30px'
-            }}>
-              <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '20px', color: 'var(--gray-900)' }}>
-                Seller Information
-              </h3>
-              
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-                <div style={{
-                  width: '50px', height: '50px', borderRadius: '50%',
-                  backgroundColor: 'var(--primary)', color: 'var(--white)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '20px', fontWeight: 700
-                }}>
+            <div className="card-pakwheels" style={{ padding: '25px', marginBottom: '20px' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#1a3b5d', marginBottom: '20px' }}>Seller Information</h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '25px' }}>
+                <div style={{ width: '60px', height: '60px', borderRadius: '50%', backgroundColor: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '24px', fontWeight: 700 }}>
                   {ad.sellerName.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <div style={{ fontWeight: 600, fontSize: '16px' }}>{ad.sellerName}</div>
-                  {ad.sellerEmail && <div style={{ fontSize: '13px', color: 'var(--gray-500)' }}>{ad.sellerEmail}</div>}
+                  <div style={{ fontWeight: 700, fontSize: '16px', color: '#1a3b5d' }}>{ad.sellerName}</div>
+                  <div style={{ fontSize: '12px', color: 'var(--primary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Award size={12} /> Verified Seller
+                  </div>
                 </div>
               </div>
-
-              {revealPhone ? (
-                <div style={{
-                  backgroundColor: 'var(--primary-light)', color: 'var(--primary)',
-                  border: '1px solid var(--primary-border)', padding: '16px',
-                  borderRadius: 'var(--border-radius-md)', textAlign: 'center',
-                  fontWeight: 700, fontSize: '20px', display: 'flex', alignItems: 'center',
-                  justifyContent: 'center', gap: '10px', animation: 'fadeIn 0.3s ease'
-                }}>
-                  <Phone size={20} />
+              
+              {!revealPhone ? (
+                <button 
+                  onClick={() => setRevealPhone(true)}
+                  className="btn btn-primary" 
+                  style={{ width: '100%', padding: '14px', fontSize: '16px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
+                >
+                  <Phone size={20} /> Show Phone Number
+                </button>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '14px', backgroundColor: '#e6f4f4', color: 'var(--primary)', borderRadius: '4px', fontWeight: 700, fontSize: '20px' }}>
                   {ad.sellerPhone}
                 </div>
-              ) : (
-                <button
-                  onClick={() => setRevealPhone(true)}
-                  className="btn btn-primary hover-lift"
-                  style={{ width: '100%', padding: '16px', fontSize: '16px' }}
-                >
-                  <Phone size={20} />
-                  Contact Seller
-                </button>
               )}
+              
+              <button className="btn" style={{ width: '100%', marginTop: '15px', padding: '14px', border: '1px solid var(--primary)', color: 'var(--primary)', fontSize: '16px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                <MessageCircle size={20} /> Chat with Seller
+              </button>
             </div>
 
-            {/* Safety Tips */}
-            <div style={{
-              backgroundColor: 'rgba(217, 119, 6, 0.05)',
-              borderRadius: 'var(--border-radius-md)',
-              border: '1px solid rgba(217, 119, 6, 0.2)',
-              padding: '24px',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#D97706', fontWeight: 600, marginBottom: '12px' }}>
-                <ShieldAlert size={20} />
-                Safety Tips for Buyers
+            {/* Safety Tips Card */}
+            <div style={{ backgroundColor: '#fffbe6', border: '1px solid #ffe58f', borderRadius: '4px', padding: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#856404', fontWeight: 700, marginBottom: '10px', fontSize: '14px' }}>
+                <ShieldAlert size={18} /> Safety Tips for Buyers
               </div>
-              <ul style={{ listStyle: 'none', fontSize: '13px', color: '#B45309', display: 'flex', flexDirection: 'column', gap: '8px', paddingLeft: '4px' }}>
-                <li>• Avoid paying advance payment.</li>
-                <li>• Meet the seller in a safe, public location.</li>
-                <li>• Inspect the vehicle/part carefully before buying.</li>
+              <ul style={{ paddingLeft: '18px', fontSize: '12px', color: '#856404', lineHeight: '1.6' }}>
+                <li>Do not pay advance payment</li>
+                <li>Meet seller in public place</li>
+                <li>Verify vehicle documents before buying</li>
+                <li>Check car in daylight</li>
               </ul>
             </div>
           </div>
+
+        </div>
+
+        {/* Related Ads */}
+        <div style={{ marginTop: '50px' }}>
+          <h2 style={{ fontSize: '22px', fontWeight: 700, color: '#1a3b5d', marginBottom: '25px' }}>Similar Used Cars</h2>
+          <div className="grid grid-4">
+            {ads.map(item => (
+              <div 
+                key={item.id} 
+                className="card-pakwheels hover-lift" 
+                onClick={() => navigate(`/ads/${item.id}`)}
+                style={{ cursor: 'pointer' }}
+              >
+                <img src={item.images.split(',')[0]} style={{ width: '100%', height: '140px', objectFit: 'cover' }} />
+                <div style={{ padding: '15px' }}>
+                  <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#1a3b5d', marginBottom: '8px' }}>{item.title}</h4>
+                  <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--primary)', marginBottom: '8px' }}>PKR {item.price.toLocaleString()}</div>
+                  <div style={{ fontSize: '11px', color: '#999' }}>{item.city} | {item.year}</div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
+
     </div>
   );
 }

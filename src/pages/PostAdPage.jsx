@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Check, AlertCircle, Upload, Trash2, Link } from 'lucide-react';
+import { 
+  Check, AlertCircle, Upload, Trash2, Link, 
+  Car, Info, Shield, Camera, DollarSign, User, MapPin
+} from 'lucide-react';
 
 export default function PostAdPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [step, setStep] = useState(1);
 
   const [form, setForm] = useState({
     category: 'CAR',
@@ -31,14 +35,12 @@ export default function PostAdPage() {
 
   const [isDragging, setIsDragging] = useState(false);
   const [uploadedPreviews, setUploadedPreviews] = useState([]);
-  const [pastedUrl, setPastedUrl] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
   };
 
-  // Convert uploaded files to Base64
   const handleFiles = (files) => {
     const fileArray = Array.from(files);
     fileArray.forEach(file => {
@@ -46,47 +48,12 @@ export default function PostAdPage() {
       reader.onloadend = () => {
         setUploadedPreviews(prev => {
           const updated = [...prev, reader.result];
-          // Sync with form.images (comma-separated base64)
           setForm(f => ({ ...f, images: updated.join(',') }));
           return updated;
         });
       };
       reader.readAsDataURL(file);
     });
-  };
-
-  const onDragOver = (e) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const onDragLeave = () => {
-    setIsDragging(false);
-  };
-
-  const onDrop = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-    if (e.dataTransfer.files) {
-      handleFiles(e.dataTransfer.files);
-    }
-  };
-
-  const handleBrowse = (e) => {
-    if (e.target.files) {
-      handleFiles(e.target.files);
-    }
-  };
-
-  const addUrlImage = () => {
-    if (pastedUrl.trim()) {
-      setUploadedPreviews(prev => {
-        const updated = [...prev, pastedUrl.trim()];
-        setForm(f => ({ ...f, images: updated.join(',') }));
-        return updated;
-      });
-      setPastedUrl('');
-    }
   };
 
   const removeImage = (index) => {
@@ -115,15 +82,10 @@ export default function PostAdPage() {
         body: JSON.stringify(form)
       });
 
-      if (!res.ok) {
-        throw new Error('Ad submission failed. Please try again.');
-      }
+      if (!res.ok) throw new Error('Ad submission failed. Please try again.');
 
       setSuccess(true);
-      setTimeout(() => {
-        navigate('/ads');
-      }, 2000);
-
+      setTimeout(() => navigate('/ads'), 2000);
     } catch (err) {
       setError(err.message);
       setLoading(false);
@@ -133,289 +95,206 @@ export default function PostAdPage() {
   if (success) {
     return (
       <div className="container" style={{ padding: '100px 0', textAlign: 'center', animation: 'fadeIn 0.5s ease' }}>
-        <div style={{
-          width: '80px', height: '80px', backgroundColor: 'var(--primary-light)',
-          color: 'var(--primary)', borderRadius: '50%', display: 'inline-flex',
-          alignItems: 'center', justifyContent: 'center', marginBottom: '24px'
-        }}>
+        <div style={{ width: '80px', height: '80px', backgroundColor: '#e6f4f4', color: 'var(--primary)', borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
           <Check size={40} />
         </div>
-        <h2 style={{ fontSize: '28px', fontWeight: 700, color: 'var(--black)', marginBottom: '12px' }}>
-          Ad Posted Successfully!
-        </h2>
-        <p style={{ color: 'var(--gray-500)' }}>Redirecting you to listings...</p>
+        <h2 style={{ fontSize: '28px', fontWeight: 700, color: '#1a3b5d', marginBottom: '12px' }}>Ad Posted Successfully!</h2>
+        <p style={{ color: '#666' }}>Redirecting you to listings...</p>
       </div>
     );
   }
 
   return (
-    <div style={{ animation: 'fadeIn 0.5s ease', backgroundColor: 'var(--gray-50)', paddingBottom: '60px' }}>
-      {/* Header */}
-      <section style={{ backgroundColor: 'var(--white)', padding: '30px 0', borderBottom: '1px solid var(--gray-200)' }}>
-        <div className="container">
-          <h1 style={{ fontSize: '28px', fontWeight: 700, color: 'var(--black)' }}>Post an Ad</h1>
-          <p style={{ color: 'var(--gray-500)' }}>Sell your vehicle or part for the best price in Pakistan.</p>
+    <div style={{ animation: 'fadeIn 0.5s ease', backgroundColor: '#f2f3f3', paddingBottom: '80px' }}>
+      
+      {/* Top Banner */}
+      <section style={{ backgroundColor: 'var(--white)', padding: '40px 0', borderBottom: '1px solid #e1e1e1' }}>
+        <div className="container" style={{ textAlign: 'center' }}>
+          <h1 style={{ fontSize: '32px', fontWeight: 700, color: '#1a3b5d', marginBottom: '10px' }}>Sell your Car with 3 Easy Steps!</h1>
+          <p style={{ color: '#666' }}>It's free and takes less than a minute</p>
         </div>
       </section>
 
-      <section className="container" style={{ marginTop: '40px', maxWidth: '800px' }}>
-        <form onSubmit={handleSubmit} style={{
-          backgroundColor: 'var(--white)',
-          padding: '40px',
-          borderRadius: 'var(--border-radius-md)',
-          border: '1px solid var(--gray-200)',
-          boxShadow: 'var(--shadow-sm)'
-        }}>
-          {error && (
-            <div style={{
-              backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#EF4444',
-              padding: '16px', borderRadius: 'var(--border-radius-md)',
-              display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px', fontWeight: 500
-            }}>
-              <AlertCircle size={20} />
-              {error}
-            </div>
-          )}
+      {/* Progress Steps */}
+      <div className="container" style={{ maxWidth: '900px', marginTop: '-30px' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '5px', marginBottom: '40px' }}>
+          {[1, 2, 3].map(s => (
+            <div key={s} style={{ 
+              width: '100px', height: '6px', 
+              backgroundColor: step >= s ? 'var(--primary)' : '#ddd',
+              borderRadius: '3px'
+            }} />
+          ))}
+        </div>
 
-          {/* Section 1: Item Details */}
-          <h3 style={{ fontSize: '18px', fontWeight: 700, borderBottom: '1px solid var(--gray-100)', paddingBottom: '8px', marginBottom: '20px' }}>
-            1. Item Information
-          </h3>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '30px', alignItems: 'start' }}>
+          
+          {/* Main Form Area */}
+          <div style={{ backgroundColor: 'var(--white)', borderRadius: '8px', border: '1px solid #e1e1e1', padding: '40px' }}>
+            <form onSubmit={handleSubmit}>
+              
+              {step === 1 && (
+                <div style={{ animation: 'fadeIn 0.4s ease' }}>
+                  <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#1a3b5d', marginBottom: '30px', borderBottom: '1px solid #eee', paddingBottom: '15px' }}>
+                    <Car size={20} style={{ verticalAlign: 'middle', marginRight: '10px' }} /> Car Information
+                  </h3>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                      <div>
+                        <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#444', marginBottom: '8px' }}>Make *</label>
+                        <input type="text" name="make" value={form.make} onChange={handleChange} placeholder="e.g. Honda" style={{ padding: '12px' }} />
+                      </div>
+                      <div>
+                        <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#444', marginBottom: '8px' }}>Model *</label>
+                        <input type="text" name="model" value={form.model} onChange={handleChange} placeholder="e.g. Civic" style={{ padding: '12px' }} />
+                      </div>
+                    </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '24px' }}>
-            <div>
-              <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--gray-700)', marginBottom: '6px' }}>Category *</label>
-              <select name="category" value={form.category} onChange={handleChange}>
-                <option value="CAR">Car</option>
-                <option value="BIKE">Bike</option>
-                <option value="AUTOPART">Auto Part</option>
-              </select>
-            </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                      <div>
+                        <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#444', marginBottom: '8px' }}>Year *</label>
+                        <input type="number" name="year" value={form.year} onChange={handleChange} placeholder="e.g. 2021" style={{ padding: '12px' }} />
+                      </div>
+                      <div>
+                        <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#444', marginBottom: '8px' }}>City *</label>
+                        <input type="text" name="city" value={form.city} onChange={handleChange} placeholder="e.g. Lahore" style={{ padding: '12px' }} />
+                      </div>
+                    </div>
 
-            <div>
-              <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--gray-700)', marginBottom: '6px' }}>Title / Ad Name *</label>
-              <input type="text" name="title" value={form.title} onChange={handleChange} placeholder="e.g. Honda Civic Oriel 2021" />
-            </div>
-          </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#444', marginBottom: '8px' }}>Ad Title *</label>
+                      <input type="text" name="title" value={form.title} onChange={handleChange} placeholder="e.g. Honda Civic Oriel 2021 For Sale" style={{ padding: '12px' }} />
+                    </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '24px' }}>
-            <div>
-              <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--gray-700)', marginBottom: '6px' }}>Make *</label>
-              <input type="text" name="make" value={form.make} onChange={handleChange} placeholder="e.g. Honda, Suzuki" />
-            </div>
-
-            <div>
-              <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--gray-700)', marginBottom: '6px' }}>Model *</label>
-              <input type="text" name="model" value={form.model} onChange={handleChange} placeholder="e.g. Civic, Mehran" />
-            </div>
-
-            <div>
-              <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--gray-700)', marginBottom: '6px' }}>City *</label>
-              <input type="text" name="city" value={form.city} onChange={handleChange} placeholder="e.g. Lahore, Karachi" />
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '24px' }}>
-            <div>
-              <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--gray-700)', marginBottom: '6px' }}>Price (PKR) *</label>
-              <input type="number" name="price" value={form.price} onChange={handleChange} placeholder="e.g. 1500000" />
-            </div>
-
-            <div>
-              <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--gray-700)', marginBottom: '6px' }}>Condition *</label>
-              <select name="condition" value={form.condition} onChange={handleChange}>
-                <option value="Used">Used</option>
-                <option value="New">New</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Section 2: Specs */}
-          {form.category !== 'AUTOPART' && (
-            <>
-              <h3 style={{ fontSize: '18px', fontWeight: 700, borderBottom: '1px solid var(--gray-100)', paddingBottom: '8px', marginBottom: '20px', marginTop: '40px' }}>
-                2. Technical Specifications
-              </h3>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '20px', marginBottom: '24px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--gray-700)', marginBottom: '6px' }}>Year</label>
-                  <input type="number" name="year" value={form.year} onChange={handleChange} placeholder="e.g. 2020" />
+                    <div style={{ textAlign: 'right', marginTop: '20px' }}>
+                      <button type="button" onClick={() => setStep(2)} className="btn btn-primary" style={{ padding: '12px 40px', borderRadius: '4px', fontWeight: 700 }}>Next Step</button>
+                    </div>
+                  </div>
                 </div>
+              )}
 
-                <div>
-                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--gray-700)', marginBottom: '6px' }}>Mileage (km)</label>
-                  <input type="number" name="mileage" value={form.mileage} onChange={handleChange} placeholder="e.g. 50000" />
-                </div>
+              {step === 2 && (
+                <div style={{ animation: 'fadeIn 0.4s ease' }}>
+                  <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#1a3b5d', marginBottom: '30px', borderBottom: '1px solid #eee', paddingBottom: '15px' }}>
+                    <Camera size={20} style={{ verticalAlign: 'middle', marginRight: '10px' }} /> Photos & Details
+                  </h3>
 
-                <div>
-                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--gray-700)', marginBottom: '6px' }}>Fuel Type</label>
-                  <select name="fuelType" value={form.fuelType} onChange={handleChange}>
-                    <option value="Petrol">Petrol</option>
-                    <option value="Diesel">Diesel</option>
-                    <option value="Hybrid">Hybrid</option>
-                    <option value="Electric">Electric</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--gray-700)', marginBottom: '6px' }}>Transmission</label>
-                  <select name="transmission" value={form.transmission} onChange={handleChange}>
-                    <option value="Automatic">Automatic</option>
-                    <option value="Manual">Manual</option>
-                  </select>
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* Section 3: Extra Info */}
-          <h3 style={{ fontSize: '18px', fontWeight: 700, borderBottom: '1px solid var(--gray-100)', paddingBottom: '8px', marginBottom: '20px', marginTop: '40px' }}>
-            {form.category === 'AUTOPART' ? '2. Additional Details' : '3. Additional Details'}
-          </h3>
-
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--gray-700)', marginBottom: '6px' }}>Description</label>
-            <textarea name="description" value={form.description} onChange={handleChange} rows="4" placeholder="Provide details about condition, upgrades, history..."></textarea>
-          </div>
-
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--gray-700)', marginBottom: '6px' }}>Features (Comma-separated)</label>
-            <input type="text" name="features" value={form.features} onChange={handleChange} placeholder="e.g. ABS, Alloy Rims, Sunroof" />
-          </div>
-
-          {/* Image Upload Area */}
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--gray-700)', marginBottom: '12px' }}>Upload Images *</label>
-            
-            <div
-              onDragOver={onDragOver}
-              onDragLeave={onDragLeave}
-              onDrop={onDrop}
-              style={{
-                border: `2px dashed ${isDragging ? 'var(--primary)' : 'var(--gray-300)'}`,
-                backgroundColor: isDragging ? 'var(--primary-light)' : 'var(--gray-50)',
-                padding: '40px 20px',
-                borderRadius: 'var(--border-radius-md)',
-                textAlign: 'center',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '12px'
-              }}
-            >
-              <Upload size={32} style={{ color: 'var(--gray-400)' }} />
-              <div>
-                <p style={{ fontSize: '15px', fontWeight: 600, color: 'var(--gray-700)' }}>
-                  Drag and drop your files here, or <span style={{ color: 'var(--primary)' }}>browse</span>
-                </p>
-                <p style={{ fontSize: '12px', color: 'var(--gray-400)', marginTop: '4px' }}>Supports JPG, JPEG, PNG</p>
-              </div>
-              <input
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handleBrowse}
-                style={{
-                  position: 'absolute', opacity: 0, width: '100%', height: '100%',
-                  top: 0, left: 0, cursor: 'pointer', pointerEvents: 'none'
-                }}
-              />
-              <button
-                type="button"
-                className="btn"
-                onClick={() => document.getElementById('file-input-id').click()}
-                style={{ backgroundColor: 'var(--gray-200)', color: 'var(--gray-700)' }}
-              >
-                Choose Files
-              </button>
-              <input id="file-input-id" type="file" multiple accept="image/*" onChange={handleBrowse} style={{ display: 'none' }} />
-            </div>
-
-            {/* URL Fallback */}
-            <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
-              <input
-                type="text"
-                placeholder="Or paste an image URL..."
-                value={pastedUrl}
-                onChange={(e) => setPastedUrl(e.target.value)}
-                style={{ flex: 1 }}
-              />
-              <button
-                type="button"
-                onClick={addUrlImage}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '6px',
-                  backgroundColor: 'var(--black)', color: 'var(--white)',
-                  borderRadius: 'var(--border-radius-md)', padding: '0 16px'
-                }}
-              >
-                <Link size={16} /> Add URL
-              </button>
-            </div>
-
-            {/* Previews */}
-            {uploadedPreviews.length > 0 && (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '20px' }}>
-                {uploadedPreviews.map((src, index) => (
-                  <div key={index} style={{
-                    width: '100px', height: '100px', position: 'relative',
-                    borderRadius: 'var(--border-radius-sm)', overflow: 'hidden',
-                    border: '1px solid var(--gray-200)'
-                  }}>
-                    <img src={src} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    <button
-                      type="button"
-                      onClick={() => removeImage(index)}
-                      style={{
-                        position: 'absolute', top: '4px', right: '4px',
-                        backgroundColor: 'rgba(239, 68, 68, 0.8)', color: 'var(--white)',
-                        border: 'none', borderRadius: '50%', width: '22px', height: '22px',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
+                  <div style={{ marginBottom: '30px' }}>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#444', marginBottom: '15px' }}>Upload Photos (Max 10)</label>
+                    <div 
+                      onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                      onDragLeave={() => setIsDragging(false)}
+                      onDrop={(e) => { e.preventDefault(); setIsDragging(false); handleFiles(e.dataTransfer.files); }}
+                      style={{ 
+                        border: '2px dashed #ccc', borderRadius: '8px', padding: '40px', 
+                        textAlign: 'center', backgroundColor: isDragging ? '#e6f4f4' : '#fcfcfc',
+                        cursor: 'pointer'
                       }}
+                      onClick={() => document.getElementById('photo-input').click()}
                     >
-                      <Trash2 size={12} />
+                      <input id="photo-input" type="file" multiple accept="image/*" onChange={(e) => handleFiles(e.target.files)} style={{ display: 'none' }} />
+                      <div style={{ color: 'var(--primary)', marginBottom: '10px' }}><Camera size={40} /></div>
+                      <div style={{ fontWeight: 600, fontSize: '15px', color: '#1a3b5d' }}>Add Photos</div>
+                      <div style={{ fontSize: '12px', color: '#999', marginTop: '5px' }}>(Drag & Drop or Click to browse)</div>
+                    </div>
+
+                    {uploadedPreviews.length > 0 && (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '20px' }}>
+                        {uploadedPreviews.map((src, idx) => (
+                          <div key={idx} style={{ width: '80px', height: '60px', position: 'relative', borderRadius: '4px', overflow: 'hidden', border: '1px solid #eee' }}>
+                            <img src={src} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            <button type="button" onClick={() => removeImage(idx)} style={{ position: 'absolute', top: '2px', right: '2px', background: 'rgba(255,0,0,0.7)', color: 'white', border: 'none', borderRadius: '50%', padding: '2px' }}>
+                              <Trash2 size={10} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#444', marginBottom: '8px' }}>Price (PKR) *</label>
+                      <input type="number" name="price" value={form.price} onChange={handleChange} placeholder="e.g. 2500000" style={{ padding: '12px' }} />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#444', marginBottom: '8px' }}>Mileage (km) *</label>
+                      <input type="number" name="mileage" value={form.mileage} onChange={handleChange} placeholder="e.g. 45000" style={{ padding: '12px' }} />
+                    </div>
+                  </div>
+
+                  <div style={{ marginBottom: '20px' }}>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#444', marginBottom: '8px' }}>Description *</label>
+                    <textarea name="description" value={form.description} onChange={handleChange} rows="5" placeholder="Tell us about your car..." style={{ padding: '12px' }}></textarea>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '30px' }}>
+                    <button type="button" onClick={() => setStep(1)} className="btn" style={{ padding: '12px 30px', border: '1px solid #ccc' }}>Back</button>
+                    <button type="button" onClick={() => setStep(3)} className="btn btn-primary" style={{ padding: '12px 40px', borderRadius: '4px', fontWeight: 700 }}>Next Step</button>
+                  </div>
+                </div>
+              )}
+
+              {step === 3 && (
+                <div style={{ animation: 'fadeIn 0.4s ease' }}>
+                  <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#1a3b5d', marginBottom: '30px', borderBottom: '1px solid #eee', paddingBottom: '15px' }}>
+                    <User size={20} style={{ verticalAlign: 'middle', marginRight: '10px' }} /> Contact Details
+                  </h3>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#444', marginBottom: '8px' }}>Full Name *</label>
+                      <input type="text" name="sellerName" value={form.sellerName} onChange={handleChange} placeholder="Your Name" style={{ padding: '12px' }} />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#444', marginBottom: '8px' }}>Phone Number *</label>
+                      <input type="text" name="sellerPhone" value={form.sellerPhone} onChange={handleChange} placeholder="e.g. 0300 1234567" style={{ padding: '12px' }} />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#444', marginBottom: '8px' }}>Email (Optional)</label>
+                      <input type="email" name="sellerEmail" value={form.sellerEmail} onChange={handleChange} placeholder="your@email.com" style={{ padding: '12px' }} />
+                    </div>
+                  </div>
+
+                  {error && (
+                    <div style={{ marginTop: '20px', color: '#ff4d4f', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <AlertCircle size={16} /> {error}
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '40px' }}>
+                    <button type="button" onClick={() => setStep(2)} className="btn" style={{ padding: '12px 30px', border: '1px solid #ccc' }}>Back</button>
+                    <button type="submit" disabled={loading} className="btn btn-primary" style={{ padding: '12px 40px', borderRadius: '4px', fontWeight: 700 }}>
+                      {loading ? 'Posting...' : 'Finish & Submit'}
                     </button>
                   </div>
-                ))}
+                </div>
+              )}
+            </form>
+          </div>
+
+          {/* Sidebar Tips */}
+          <aside>
+            <div style={{ backgroundColor: '#fffbe6', border: '1px solid #ffe58f', borderRadius: '8px', padding: '25px', position: 'sticky', top: '100px' }}>
+              <h4 style={{ fontSize: '16px', fontWeight: 700, color: '#856404', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Info size={18} /> Ad Posting Tips
+              </h4>
+              <ul style={{ paddingLeft: '18px', fontSize: '13px', color: '#856404', display: 'flex', flexDirection: 'column', gap: '12px', lineHeight: '1.4' }}>
+                <li><strong>Photos:</strong> Ads with 10+ photos get 5x more views.</li>
+                <li><strong>Price:</strong> Check similar cars for market competitive price.</li>
+                <li><strong>Details:</strong> Mention service history and any modifications.</li>
+                <li><strong>Verification:</strong> Use a reachable phone number for buyers.</li>
+              </ul>
+              <div style={{ marginTop: '25px', borderTop: '1px solid #ffe58f', paddingTop: '20px', fontSize: '12px', color: '#856404', textAlign: 'center' }}>
+                <Shield size={32} style={{ opacity: 0.3, marginBottom: '10px' }} />
+                <p>We ensure your safety by verifying buyers and protecting your data.</p>
               </div>
-            )}
-          </div>
-
-          {/* Section 4: Seller Info */}
-          <h3 style={{ fontSize: '18px', fontWeight: 700, borderBottom: '1px solid var(--gray-100)', paddingBottom: '8px', marginBottom: '20px', marginTop: '40px' }}>
-            {form.category === 'AUTOPART' ? '3. Seller Contact' : '4. Seller Contact'}
-          </h3>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '40px' }}>
-            <div>
-              <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--gray-700)', marginBottom: '6px' }}>Name *</label>
-              <input type="text" name="sellerName" value={form.sellerName} onChange={handleChange} placeholder="Your name" />
             </div>
+          </aside>
 
-            <div>
-              <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--gray-700)', marginBottom: '6px' }}>Phone *</label>
-              <input type="text" name="sellerPhone" value={form.sellerPhone} onChange={handleChange} placeholder="e.g. 03001234567" />
-            </div>
-
-            <div>
-              <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: 'var(--gray-700)', marginBottom: '6px' }}>Email</label>
-              <input type="email" name="sellerEmail" value={form.sellerEmail} onChange={handleChange} placeholder="your@email.com" />
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            className="btn btn-primary hover-lift"
-            disabled={loading}
-            style={{ width: '100%', padding: '16px', fontSize: '16px' }}
-          >
-            {loading ? 'Posting Ad...' : 'Submit Ad'}
-          </button>
-        </form>
-      </section>
+        </div>
+      </div>
     </div>
   );
 }

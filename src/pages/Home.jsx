@@ -123,7 +123,7 @@ export default function Home() {
             </button>
           </div>
           <Link to="#" style={{ display: 'block', marginTop: '15px', color: 'var(--white)', fontSize: '14px', fontWeight: 600 }}>
-            Advanced Filter >
+            Advanced Filter &gt;
           </Link>
         </div>
       </section>
