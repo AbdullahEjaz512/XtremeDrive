@@ -19,7 +19,7 @@ export default function BlogPage() {
   const popularTags = ['Price', 'Suzuki', 'Toyota', 'Honda', 'Review', 'Used Car', 'Electric', 'Hybrid', 'Tips'];
 
   return (
-    <div className="blog-container animate-fade" style={{ backgroundColor: '#fff', color: '#333' }}>
+    <div className="blog-container animate-fade" style={{ backgroundColor: '#fff', color: '#333', minHeight: '100vh' }}>
       
       {/* Search Header */}
       <div style={{ backgroundColor: '#fff', borderBottom: '1px solid #eee', padding: '20px 0' }}>
@@ -46,26 +46,31 @@ export default function BlogPage() {
 
       <div className="container" style={{ paddingTop: '40px' }}>
         
-        {/* Featured Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: '8px', marginBottom: '50px', height: '480px' }}>
-          <div style={{ position: 'relative', background: '#333', overflow: 'hidden', borderRadius: '4px' }}>
-            <img src={featuredNews[0].img} alt="Hero" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 }} />
-            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '50px 35px', background: 'linear-gradient(transparent, rgba(0,0,0,0.95))', color: 'white' }}>
-              <span style={{ backgroundColor: '#b73439', padding: '5px 12px', fontSize: '12px', fontWeight: 800, borderRadius: '2px' }}>{featuredNews[0].category}</span>
-              <h1 style={{ fontSize: '32px', fontWeight: 800, marginTop: '20px', lineHeight: '1.2' }}>{featuredNews[0].title}</h1>
-              <div style={{ fontSize: '14px', marginTop: '12px', opacity: 0.9 }}>{featuredNews[0].date}</div>
-            </div>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {featuredNews.slice(1).map(news => (
-              <div key={news.id} style={{ position: 'relative', background: '#333', flex: 1, overflow: 'hidden', borderRadius: '4px' }}>
-                <img src={news.img} alt="Side" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 }} />
-                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '25px', background: 'linear-gradient(transparent, rgba(0,0,0,0.95))', color: 'white' }}>
-                  <span style={{ backgroundColor: '#b73439', padding: '4px 10px', fontSize: '11px', fontWeight: 800, borderRadius: '2px' }}>{news.category}</span>
-                  <h3 style={{ fontSize: '18px', fontWeight: 800, marginTop: '12px', lineHeight: '1.3' }}>{news.title}</h3>
-                </div>
+        {/* Featured Grid Section */}
+        <div style={{ marginBottom: '50px', overflow: 'hidden' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: '8px', height: '480px', overflow: 'hidden' }}>
+            {/* Main Featured */}
+            <div style={{ position: 'relative', background: '#333', overflow: 'hidden', borderRadius: '4px' }}>
+              <img src={featuredNews[0].img} alt="Hero" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 }} />
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '50px 35px', background: 'linear-gradient(transparent, rgba(0,0,0,0.95))', color: 'white' }}>
+                <span style={{ backgroundColor: '#b73439', padding: '5px 12px', fontSize: '12px', fontWeight: 800, borderRadius: '2px' }}>{featuredNews[0].category}</span>
+                <h1 style={{ fontSize: '32px', fontWeight: 800, marginTop: '20px', lineHeight: '1.2' }}>{featuredNews[0].title}</h1>
+                <div style={{ fontSize: '14px', marginTop: '12px', opacity: 0.9 }}>{featuredNews[0].date}</div>
               </div>
-            ))}
+            </div>
+            
+            {/* Sidebar Featured */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', overflow: 'hidden' }}>
+              {featuredNews.slice(1).map(news => (
+                <div key={news.id} style={{ position: 'relative', background: '#333', flex: 1, overflow: 'hidden', borderRadius: '4px' }}>
+                  <img src={news.img} alt="Side" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 }} />
+                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '25px', background: 'linear-gradient(transparent, rgba(0,0,0,0.95))', color: 'white' }}>
+                    <span style={{ backgroundColor: '#b73439', padding: '4px 10px', fontSize: '11px', fontWeight: 800, borderRadius: '2px' }}>{news.category}</span>
+                    <h3 style={{ fontSize: '18px', fontWeight: 800, marginTop: '12px', lineHeight: '1.3' }}>{news.title}</h3>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -150,7 +155,6 @@ export default function BlogPage() {
               </div>
             </div>
           </aside>
-
         </div>
 
         {/* Section: News & Tips Horizontal */}

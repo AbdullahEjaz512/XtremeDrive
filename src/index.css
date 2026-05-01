@@ -351,10 +351,9 @@ input:focus, select:focus, textarea:focus {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Responsive Image Fix */
-img {
+/* Responsive Image Fix — only for content images, not layout images */
+img:not(.layout-img) {
   max-width: 100%;
-  height: auto;
 }
 
 .desktop-only {
