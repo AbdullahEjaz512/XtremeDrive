@@ -6,8 +6,24 @@ datasource db {
   provider = "sqlite"
 }
 
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  password      String
+  name          String
+  phone         String?
+  city          String?
+  profileImage  String?
+  bio           String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  ads           Ad[]
+}
+
 model Ad {
   id              String   @id @default(uuid())
+  userId          String
   category        String   // CAR, BIKE, AUTO_PART
   title           String
   make            String
@@ -23,9 +39,8 @@ model Ad {
   description     String
   images          String   // Comma-separated URLs
   features        String?  // Comma-separated
-  sellerName      String
-  sellerPhone     String
-  sellerEmail     String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
