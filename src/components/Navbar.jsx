@@ -5,12 +5,21 @@ import {
   DollarSign, ChevronDown, Smartphone, Globe, Star, 
   Battery, FileText, CheckCircle, Zap, Map, Users, Layout
 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null); 
   const [isUrdu, setIsUrdu] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authModalType, setAuthModalType] = useState(null); // 'signin' or 'signup'
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [city, setCity] = useState('');
+  const [authError, setAuthError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const { login, signup } = useAuth();
   const navigate = useNavigate();
 
   const handleMenuHover = (menu) => {
@@ -19,6 +28,48 @@ export default function Navbar() {
 
   const handleMenuLeave = () => {
     setActiveMenu(null);
+  };
+
+  const closeAuthModal = () => {
+    setAuthModalType(null);
+    setEmail('');
+    setPassword('');
+    setName('');
+    setPhone('');
+    setCity('');
+    setAuthError('');
+  };
+
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    setAuthError('');
+    setIsLoading(true);
+
+    try {
+      await login(email, password);
+      closeAuthModal();
+      navigate('/');
+    } catch (error) {
+      setAuthError(error.message || 'Sign in failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    setAuthError('');
+    setIsLoading(true);
+
+    try {
+      await signup(email, password, name, phone, city);
+      closeAuthModal();
+      navigate('/');
+    } catch (error) {
+      setAuthError(error.message || 'Sign up failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const navItemStyle = {
@@ -75,9 +126,9 @@ export default function Navbar() {
             </button>
             <span style={{ color: 'var(--gray-600)' }}>|</span>
             <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-              <button onClick={() => setShowAuthModal(true)} style={{ color: 'white', fontWeight: 600 }}>Sign Up</button>
+              <button onClick={() => setAuthModalType('signup')} style={{ color: 'white', fontWeight: 600 }}>Sign Up</button>
               <span style={{ color: 'var(--gray-600)' }}>|</span>
-              <button onClick={() => setShowAuthModal(true)} style={{ color: 'white', fontWeight: 600 }}>Sign In</button>
+              <button onClick={() => setAuthModalType('signin')} style={{ color: 'white', fontWeight: 600 }}>Sign In</button>
             </div>
           </div>
         </div>
@@ -276,26 +327,125 @@ export default function Navbar() {
         )}
 
         {/* Auth Modal */}
-        {showAuthModal && (
+        {authModalType && (
           <div style={{
             position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
             background: 'rgba(0,0,0,0.7)', zIndex: 1000,
             display: 'flex', alignItems: 'center', justifyContent: 'center'
-          }} onClick={() => setShowAuthModal(false)}>
+          }} onClick={closeAuthModal}>
             <div className="card-pakwheels animate-fade" style={{
               width: '400px', padding: '40px', background: 'white',
               position: 'relative', cursor: 'default'
             }} onClick={e => e.stopPropagation()}>
-              <button style={{ position: 'absolute', top: '15px', right: '15px', color: '#999' }} onClick={() => setShowAuthModal(false)}>
+              <button style={{ position: 'absolute', top: '15px', right: '15px', color: '#999', background: 'none', border: 'none', cursor: 'pointer' }} onClick={closeAuthModal}>
                 <X size={24} />
               </button>
-              <h2 style={{ textAlign: 'center', color: '#1a3b5d', marginBottom: '30px' }}>Sign In</h2>
-              <form style={{ display: 'flex', flexDirection: 'column', gap: '20px' }} onSubmit={(e) => { e.preventDefault(); setShowAuthModal(false); }}>
-                <input type="email" placeholder="Email Address" required />
-                <input type="password" placeholder="Password" required />
-                <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>Continue</button>
+              
+              <h2 style={{ textAlign: 'center', color: '#1a3b5d', marginBottom: '30px' }}>
+                {authModalType === 'signin' ? 'Sign In' : 'Create Account'}
+              </h2>
+
+              {authError && (
+                <div style={{ 
+                  background: '#fee', 
+                  color: '#c33', 
+                  padding: '12px', 
+                  borderRadius: '4px', 
+                  marginBottom: '20px',
+                  fontSize: '14px',
+                  border: '1px solid #fcc'
+                }}>
+                  {authError}
+                </div>
+              )}
+
+              <form style={{ display: 'flex', flexDirection: 'column', gap: '20px' }} onSubmit={authModalType === 'signin' ? handleSignIn : handleSignUp}>
+                {authModalType === 'signup' && (
+                  <>
+                    <input 
+                      type="text" 
+                      placeholder="Full Name" 
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      disabled={isLoading}
+                      style={{ padding: '12px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px' }}
+                    />
+                    <input 
+                      type="tel" 
+                      placeholder="Phone Number (Optional)" 
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      disabled={isLoading}
+                      style={{ padding: '12px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px' }}
+                    />
+                    <input 
+                      type="text" 
+                      placeholder="City (Optional)" 
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      disabled={isLoading}
+                      style={{ padding: '12px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px' }}
+                    />
+                  </>
+                )}
+
+                <input 
+                  type="email" 
+                  placeholder="Email Address" 
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading}
+                  style={{ padding: '12px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px' }}
+                />
+                
+                <input 
+                  type="password" 
+                  placeholder="Password" 
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={isLoading}
+                  style={{ padding: '12px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px' }}
+                />
+
+                <button 
+                  type="submit" 
+                  className="btn btn-primary" 
+                  disabled={isLoading}
+                  style={{ 
+                    width: '100%',
+                    padding: '12px',
+                    opacity: isLoading ? 0.6 : 1,
+                    cursor: isLoading ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  {isLoading ? 'Loading...' : (authModalType === 'signin' ? 'Continue' : 'Create Account')}
+                </button>
+
                 <div style={{ textAlign: 'center', fontSize: '13px', color: '#666' }}>
-                  Don't have an account? <Link to="#" style={{ color: 'var(--primary)', fontWeight: 700 }}>Sign Up</Link>
+                  {authModalType === 'signin' ? (
+                    <>
+                      Don't have an account? <button 
+                        type="button"
+                        onClick={() => setAuthModalType('signup')}
+                        style={{ color: 'var(--primary)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+                      >
+                        Sign Up
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      Already have an account? <button 
+                        type="button"
+                        onClick={() => setAuthModalType('signin')}
+                        style={{ color: 'var(--primary)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+                      >
+                        Sign In
+                      </button>
+                    </>
+                  )}
                 </div>
               </form>
             </div>
