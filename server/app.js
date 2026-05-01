@@ -12,7 +12,9 @@ async function createPrismaClient() {
     url: process.env.DATABASE_URL || 'file:./dev.db'
   });
 
-  return new PrismaClient({ adapter, log: ['error'] });
+  const prisma = new PrismaClient({ adapter, log: ['error'] });
+  await prisma.$connect();
+  return prisma;
 }
 
 async function seedData(prismaClient) {
