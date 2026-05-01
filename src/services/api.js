@@ -71,22 +71,38 @@ export const adsAPI = {
   getUserAds: () => fetchAPI('/ads/user/my-ads'),
 };
 
-// Utility function to handle auth errors
-export function isAuthenticated() {
-  return !!localStorage.getItem('token');
+// Auth persistence utilities
+export function saveAuthData(token, user) {
+  if (token) {
+    localStorage.setItem('token', token);
+  }
+  if (user) {
+    localStorage.setItem('user', JSON.stringify(user));
+  }
 }
 
-export function logout() {
+export function clearAuthData() {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
 }
 
-export function saveAuthData(token, user) {
-  localStorage.setItem('token', token);
-  localStorage.setItem('user', JSON.stringify(user));
+export function getAuthData() {
+  const token = localStorage.getItem('token');
+  const userStr = localStorage.getItem('user');
+  return {
+    token,
+    user: userStr ? JSON.parse(userStr) : null,
+  };
+}
+
+export function isAuthenticated() {
+  return !!getAuthData().token;
+}
+
+export function logout() {
+  clearAuthData();
 }
 
 export function getUser() {
-  const userStr = localStorage.getItem('user');
-  return userStr ? JSON.parse(userStr) : null;
+  return getAuthData().user;
 }

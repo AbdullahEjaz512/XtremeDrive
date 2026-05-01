@@ -4,6 +4,7 @@ import {
   Search, Filter, MapPin, Calendar, Gauge, Fuel, 
   Settings, ChevronDown, Grid, List, Heart, Phone, X, Save
 } from 'lucide-react';
+import { adsAPI } from '../services/api.js';
 
 export default function AdsPage() {
   const location = useLocation();
@@ -11,6 +12,7 @@ export default function AdsPage() {
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState('list'); // list or grid
   const [activeFilters, setActiveFilters] = useState([]);
+  const [totalResults, setTotalResults] = useState(0);
 
   // Filter States
   const [keyword, setKeyword] = useState('');
@@ -25,24 +27,41 @@ export default function AdsPage() {
     params.forEach((value, key) => filters.push({ key, value }));
     setActiveFilters(filters);
 
-    setLoading(true);
-    fetch(`http://localhost:5000/api/ads${location.search}`)
-      .then(res => res.json())
-      .then(data => {
-        setAds(data);
+    const loadAds = async () => {
+      try {
+        const query = new URLSearchParams(location.search);
+        const page = parseInt(query.get('page') || '1', 10);
+        const limit = parseInt(query.get('limit') || '10', 10);
+        const category = query.get('category') || undefined;
+        const city = query.get('city') || undefined;
+        const sortBy = query.get('sortBy') || undefined;
+
+        const data = await adsAPI.getAds(page, limit, category, city, sortBy);
+        const normalized = (data.ads || []).map((ad, index) => ({
+          ...ad,
+          featured: Boolean(ad.featured ?? index % 3 === 0),
+          image: (ad.images || '').split(',')[0] || 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800'
+        }));
+
+        setAds(normalized);
+        setTotalResults(data.pagination?.total || normalized.length);
         setLoading(false);
-      })
-      .catch(() => {
-        // Mock Data Fallback
+      } catch (error) {
+        console.error('API Error:', error);
         setAds([
-          { id: 1, title: 'Toyota Corolla Altis 1.6', price: '6,500,000', city: 'Lahore', year: 2022, mileage: '15,000', fuel: 'Petrol', transmission: 'Automatic', engine: '1600cc', featured: true, image: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800' },
-          { id: 2, title: 'Honda Civic RS 2024', price: '9,800,000', city: 'Karachi', year: 2024, mileage: '1,200', fuel: 'Petrol', transmission: 'Automatic', engine: '1500cc', featured: true, image: 'https://images.unsplash.com/photo-1542362567-b07e54358753?w=800' },
-          { id: 3, title: 'Suzuki Alto VXL', price: '2,800,000', city: 'Islamabad', year: 2021, mileage: '35,000', fuel: 'Petrol', transmission: 'Manual', engine: '660cc', featured: false, image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800' },
-          { id: 4, title: 'KIA Sportage AWD', price: '8,200,000', city: 'Lahore', year: 2023, mileage: '8,500', fuel: 'Petrol', transmission: 'Automatic', engine: '2000cc', featured: true, image: 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800' },
-          { id: 5, title: 'Toyota Fortuner Legender', price: '18,500,000', city: 'Peshawar', year: 2023, mileage: '5,000', fuel: 'Diesel', transmission: 'Automatic', engine: '2800cc', featured: true, image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800' }
+          { id: 1, title: 'Toyota Corolla Altis 1.6', price: '6,500,000', city: 'Lahore', year: 2022, mileage: '15,000', fuelType: 'Petrol', transmission: 'Automatic', engine: '1600cc', featured: true, image: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800' },
+          { id: 2, title: 'Honda Civic RS 2024', price: '9,800,000', city: 'Karachi', year: 2024, mileage: '1,200', fuelType: 'Petrol', transmission: 'Automatic', engine: '1500cc', featured: true, image: 'https://images.unsplash.com/photo-1542362567-b07e54358753?w=800' },
+          { id: 3, title: 'Suzuki Alto VXL', price: '2,800,000', city: 'Islamabad', year: 2021, mileage: '35,000', fuelType: 'Petrol', transmission: 'Manual', engine: '660cc', featured: false, image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800' },
+          { id: 4, title: 'KIA Sportage AWD', price: '8,200,000', city: 'Lahore', year: 2023, mileage: '8,500', fuelType: 'Petrol', transmission: 'Automatic', engine: '2000cc', featured: true, image: 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800' },
+          { id: 5, title: 'Toyota Fortuner Legender', price: '18,500,000', city: 'Peshawar', year: 2023, mileage: '5,000', fuelType: 'Diesel', transmission: 'Automatic', engine: '2800cc', featured: true, image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800' }
         ]);
+        setTotalResults(50);
         setLoading(false);
-      });
+      }
+    };
+
+    setLoading(true);
+    loadAds();
   }, [location.search]);
 
   const FilterSection = ({ title, children }) => (
@@ -133,7 +152,7 @@ export default function AdsPage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
               <div>
                 <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#1a3b5d' }}>Used Cars for Sale in Pakistan</h1>
-                <p style={{ fontSize: '14px', color: '#666' }}>Showing {ads.length} of {ads.length * 10} Results</p>
+                <p style={{ fontSize: '14px', color: '#666' }}>Showing {ads.length} of {totalResults} Results</p>
               </div>
               <button className="btn btn-outline-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
                 <Save size={16} /> Save Search
@@ -194,7 +213,7 @@ export default function AdsPage() {
                   <div style={{ display: 'flex', gap: '20px', color: '#666', fontSize: '13px', marginBottom: 'auto' }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><Calendar size={14} /> {ad.year}</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><Gauge size={14} /> {ad.mileage} km</span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><Fuel size={14} /> {ad.fuel}</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><Fuel size={14} /> {ad.fuelType || ad.fuel}</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><Settings size={14} /> {ad.transmission}</span>
                   </div>
 

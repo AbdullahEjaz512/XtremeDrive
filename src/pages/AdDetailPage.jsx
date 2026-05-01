@@ -5,6 +5,7 @@ import {
   ChevronLeft, ChevronRight, MapPin, Share2, Heart, Flag,
   Settings, User, Info, MessageCircle, Clock, Award, Wrench
 } from 'lucide-react';
+import { adsAPI } from '../services/api.js';
 
 export default function AdDetailPage() {
   const { id } = useParams();
@@ -18,18 +19,18 @@ export default function AdDetailPage() {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:5000/api/ads/${id}`)
-      .then(res => {
-        if (!res.ok) throw new Error('Not found');
-        return res.json();
-      })
-      .then(data => {
-        setAd(data);
+    const loadAd = async () => {
+      try {
+        const data = await adsAPI.getAdById(id);
+        const adData = data.ad || data;
+        setAd({
+          ...adData,
+          sellerName: adData.user?.name || adData.sellerName,
+          sellerPhone: adData.user?.phone || adData.sellerPhone
+        });
         setLoading(false);
-      })
-      .catch(err => {
+      } catch (err) {
         console.error('Fetch Error, using mock data:', err);
-        // Comprehensive Mock Fallback
         setAd({
           id: id || '1',
           title: 'Toyota Corolla Altis 1.6 Special Edition 2022',
@@ -53,20 +54,25 @@ Seeing is believing. Contact only serious buyers.`,
           images: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800,https://images.unsplash.com/photo-1542362567-b07e54358753?w=800,https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800'
         });
         setLoading(false);
-      });
+      }
+    };
 
-    // Fetch related ads
-    fetch('http://localhost:5000/api/ads')
-      .then(res => res.json())
-      .then(data => setAds(data.slice(0, 4)))
-      .catch(() => {
+    const loadRelated = async () => {
+      try {
+        const data = await adsAPI.getAds(1, 4);
+        setAds(data.ads || []);
+      } catch {
         setAds([
           { id: '2', title: 'Honda Civic RS 2024', price: '9,800,000', city: 'Karachi', year: 2024, images: 'https://images.unsplash.com/photo-1542362567-b07e54358753?w=800' },
           { id: '3', title: 'Suzuki Alto VXL', price: '2,800,000', city: 'Islamabad', year: 2021, images: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800' },
           { id: '4', title: 'KIA Sportage AWD', price: '8,200,000', city: 'Lahore', year: 2023, images: 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800' },
           { id: '5', title: 'Toyota Fortuner', price: '18,500,000', city: 'Peshawar', year: 2023, images: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800' }
         ]);
-      });
+      }
+    };
+
+    loadAd();
+    loadRelated();
   }, [id]);
 
   if (loading) {
@@ -77,7 +83,8 @@ Seeing is believing. Contact only serious buyers.`,
     );
   }
 
-  const images = ad.images.split(',');
+  const images = (ad.images || '').split(',').filter(Boolean);
+  const imageList = images.length > 0 ? images : ['https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800'];
 
   return (
     <div style={{ animation: 'fadeIn 0.5s ease', backgroundColor: '#f2f3f3', paddingBottom: '60px' }}>
@@ -119,19 +126,19 @@ Seeing is believing. Contact only serious buyers.`,
             {/* Gallery Card */}
             <div className="card-pakwheels" style={{ padding: '0', overflow: 'hidden' }}>
               <div style={{ position: 'relative', height: '450px', backgroundColor: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <img src={images[activeImageIdx]} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
-                <button onClick={() => setActiveImageIdx(prev => (prev - 1 + images.length) % images.length)} style={{ position: 'absolute', left: '15px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none', borderRadius: '50%', padding: '10px', cursor: 'pointer' }}>
+                <img src={imageList[activeImageIdx]} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                <button onClick={() => setActiveImageIdx(prev => (prev - 1 + imageList.length) % imageList.length)} style={{ position: 'absolute', left: '15px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none', borderRadius: '50%', padding: '10px', cursor: 'pointer' }}>
                   <ChevronLeft size={24} />
                 </button>
-                <button onClick={() => setActiveImageIdx(prev => (prev + 1) % images.length)} style={{ position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none', borderRadius: '50%', padding: '10px', cursor: 'pointer' }}>
+                <button onClick={() => setActiveImageIdx(prev => (prev + 1) % imageList.length)} style={{ position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none', borderRadius: '50%', padding: '10px', cursor: 'pointer' }}>
                   <ChevronRight size={24} />
                 </button>
                 <div style={{ position: 'absolute', bottom: '15px', right: '15px', background: 'rgba(0,0,0,0.7)', color: 'white', padding: '4px 12px', borderRadius: '4px', fontSize: '12px' }}>
-                  {activeImageIdx + 1} / {images.length}
+                  {activeImageIdx + 1} / {imageList.length}
                 </div>
               </div>
               <div style={{ display: 'flex', gap: '10px', padding: '15px', overflowX: 'auto', backgroundColor: '#f8f9fa' }}>
-                {images.map((img, idx) => (
+                {imageList.map((img, idx) => (
                   <img 
                     key={idx} src={img} 
                     onClick={() => setActiveImageIdx(idx)}

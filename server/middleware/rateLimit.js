@@ -7,14 +7,6 @@ export const loginLimiter = rateLimit({
   message: 'Too many login attempts, please try again later',
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  keyGenerator: (req, res) => {
-    // Use IP address as key
-    return req.ip || req.connection.remoteAddress;
-  },
-  skip: (req, res) => false, // Don't skip any requests
-  onLimitReached: (req, res, options) => {
-    console.warn(`Rate limit reached for IP: ${req.ip}`);
-  },
 });
 
 // General API rate limiter: 100 requests per 15 minutes per IP
@@ -24,9 +16,6 @@ export const apiLimiter = rateLimit({
   message: 'Too many requests from this IP, please try again after some time',
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req, res) => {
-    return req.ip || req.connection.remoteAddress;
-  },
 });
 
 // Create ad rate limiter: 10 requests per hour per user
@@ -36,9 +25,4 @@ export const createAdLimiter = rateLimit({
   message: 'Too many ads created, please try again later',
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req, res) => {
-    // For authenticated users, use userId; for others use IP
-    return req.userId || req.ip || req.connection.remoteAddress;
-  },
-  skip: (req, res) => !req.userId, // Only apply to authenticated users
 });

@@ -5,6 +5,7 @@ import {
   Users, Shield, DollarSign, FileText, Briefcase, ChevronRight, 
   MapPin, Tag, Star, Award, Zap, Globe, Wrench, Package
 } from 'lucide-react';
+import { adsAPI } from '../services/api.js';
 
 export default function Home() {
   const [makes, setMakes] = useState([]);
@@ -21,26 +22,33 @@ export default function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Mocking data if API is down
     const mockMakes = ['Toyota', 'Honda', 'Suzuki', 'KIA', 'Hyundai', 'Nissan'];
     const mockCities = ['Lahore', 'Karachi', 'Islamabad', 'Faisalabad', 'Peshawar'];
     
     setMakes(mockMakes);
     setCities(mockCities);
 
-    fetch('http://localhost:5000/api/ads')
-      .then(res => res.json())
-      .then(data => setAds(data.slice(0, 8)))
-      .catch(err => {
+    const loadAds = async () => {
+      try {
+        const data = await adsAPI.getAds(1, 8);
+        const normalized = (data.ads || []).map((ad, index) => ({
+          ...ad,
+          featured: Boolean(ad.featured ?? index % 3 === 0),
+          image: (ad.images || '').split(',')[0] || 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800'
+        }));
+        setAds(normalized);
+      } catch (err) {
         console.error('API Error:', err);
-        // Fallback ads
         setAds([
           { id: 1, title: 'Toyota Corolla Altis 1.6', price: '6,500,000', city: 'Lahore', year: 2022, mileage: '15,000', featured: true, image: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800' },
           { id: 2, title: 'Honda Civic RS 2024', price: '9,800,000', city: 'Karachi', year: 2024, mileage: '1,200', featured: true, image: 'https://images.unsplash.com/photo-1542362567-b07e54358753?w=800' },
           { id: 3, title: 'Suzuki Alto VXL', price: '2,800,000', city: 'Islamabad', year: 2021, mileage: '35,000', featured: false, image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800' },
           { id: 4, title: 'KIA Sportage AWD', price: '8,200,000', city: 'Lahore', year: 2023, mileage: '8,500', featured: true, image: 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800' }
         ]);
-      });
+      }
+    };
+
+    loadAds();
   }, []);
 
   const handleSearch = (e) => {

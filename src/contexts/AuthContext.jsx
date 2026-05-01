@@ -18,11 +18,10 @@ export function AuthProvider({ children }) {
 
   // Initialize auth state from localStorage
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
+    const { token, user: userData } = api.getAuthData();
     
     if (token && userData) {
-      setUser(JSON.parse(userData));
+      setUser(userData);
       setIsAuthenticated(true);
     }
     
@@ -52,7 +51,7 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
-    api.logout();
+    api.clearAuthData();
     setUser(null);
     setIsAuthenticated(false);
   };

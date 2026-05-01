@@ -4,9 +4,12 @@ import {
   Camera, CheckCircle, Info, ChevronRight, AlertCircle, 
   MapPin, Tag, Calendar, Gauge, Fuel, Settings, FileText
 } from 'lucide-react';
+import { adsAPI } from '../services/api.js';
+import { useAuth } from '../contexts/AuthContext.jsx';
 
 export default function PostAdPage() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [formData, setFormData] = useState({
     city: '',
     make: '',
@@ -23,16 +26,41 @@ export default function PostAdPage() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+
+    if (!isAuthenticated) {
+      setError('Please log in to post an ad.');
+      return;
+    }
+
     setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const titleParts = [formData.make, formData.model, formData.year].filter(Boolean);
+      const adData = {
+        title: titleParts.join(' '),
+        make: formData.make,
+        model: formData.model,
+        year: formData.year ? parseInt(formData.year, 10) : undefined,
+        city: formData.city,
+        price: formData.price ? parseFloat(formData.price) : undefined,
+        mileage: formData.mileage ? parseInt(formData.mileage, 10) : undefined,
+        condition: 'Used',
+        description: formData.description,
+        images: Array.isArray(formData.images) ? formData.images.join(',') : ''
+      };
+
+      await adsAPI.createAd(adData);
       setLoading(false);
       alert('Ad posted successfully!');
       navigate('/ads');
-    }, 2000);
+    } catch (err) {
+      setLoading(false);
+      setError(err.message || 'Failed to post ad. Please try again.');
+    }
   };
 
   const SectionHeader = ({ num, title }) => (
@@ -57,6 +85,11 @@ export default function PostAdPage() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '30px' }}>
           
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
+            {error && (
+              <div style={{ background: '#fdecea', color: '#b71c1c', padding: '12px 16px', borderRadius: '6px', fontSize: '14px', fontWeight: 600 }}>
+                {error}
+              </div>
+            )}
             
             {/* 1. Car Information */}
             <div className="card-pakwheels" style={{ padding: '30px' }}>
